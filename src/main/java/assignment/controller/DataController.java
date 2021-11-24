@@ -21,7 +21,7 @@ public class DataController {
         ArrayList<Product> products = new ArrayList<>();
         List<Product> list = productService.loadAllProducts();
         try {
-            FileReader filereader = new FileReader("../../../women.csv");
+            FileReader filereader = new FileReader("src/main/dataset/women.csv");
 
             // create csvReader object and skip first Line
             CSVReader csvReader = new CSVReaderBuilder(filereader)
