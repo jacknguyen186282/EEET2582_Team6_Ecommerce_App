@@ -20,7 +20,7 @@ public class SQSController {
     @GetMapping("/send")
     public String sendMessageToQueue(@RequestParam String message) {
         queueMessagingTemplate.send(endpoint, MessageBuilder.withPayload(message).build());
-        return "Send: " + message;
+        return "Successfully send message: " + message;
     }
 
     @SqsListener("test-queue")
