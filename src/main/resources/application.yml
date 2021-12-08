@@ -1,3 +1,5 @@
+server:
+  port: 8081
 cloud:
   aws:
     region:
@@ -7,4 +9,13 @@ cloud:
       access-key: AKIA2LPO5M2FEENI6PXV
       secret-key: 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
     end-point:
-      uri: https://sqs.us-west-2.amazonaws.com/711855007370/test-queue
+      uri: https://sqs.us-west-2.amazonaws.com/711855007370/product
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
+        internal:
+          InstanceMetadataServiceResourceFetcher: error

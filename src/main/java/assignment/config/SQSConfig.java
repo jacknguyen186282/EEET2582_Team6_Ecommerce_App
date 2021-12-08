@@ -28,8 +28,8 @@ public class SQSConfig {
         return new QueueMessagingTemplate(amazonSQSAsync());
     }
 
-    public AmazonSQSAsync amazonSQSAsync() {
-        return AmazonSQSAsyncClientBuilder.standard().withRegion(Regions.US_WEST_2)
+    private AmazonSQSAsync amazonSQSAsync() {
+        return AmazonSQSAsyncClientBuilder.standard().withRegion(region)
                 .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(awsAccessKey, awsSecretKey)))
                 .build();
     }

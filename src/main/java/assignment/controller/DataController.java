@@ -1,5 +1,7 @@
 package assignment.controller;
 import assignment.entity.Product;
+import assignment.entity.ProductTemp;
+import assignment.service.OrderSetup;
 import assignment.service.ProductService;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
@@ -14,7 +16,8 @@ import java.util.*;
 public class DataController {
     @Autowired
     private ProductService productService;
-
+    @Autowired
+    private OrderSetup orderSetup;
     /**
      * API for initializing the database if there is no data in it
      * @return Request's status
@@ -22,6 +25,7 @@ public class DataController {
     @RequestMapping(path = "/setupDatabase", method = RequestMethod.POST)
     public String setDatabase(){
         ArrayList<Product> products = new ArrayList<>();
+        ArrayList<ProductTemp> temp_products = new ArrayList<>();
         if (productService.isExist()) return "Already initialized database!";
         String[] arr = {"women", "men", "kids", "bags", "beauty", "accessories", "house", "shoes"};
         System.out.println("Adding...!");
@@ -41,7 +45,7 @@ public class DataController {
                 if (category.equals("beauty") || category.equals("house"))
                     size = new String[]{"red", "pink", "nude", "orange"};
                 else {
-                    size = new String[]{"s", "m", "l", "oversize"};
+                    size = new String[]{"s", "m", "l", "xl", "oversize"};
                 }
 
                 // we are going to read data line by line
@@ -53,6 +57,7 @@ public class DataController {
                                 .build();
                         while ((row = csvReader.readNext()) != null){
                             products.add(new Product((row[20] + "-" + season + "-" + s), (row[2] + "-" + season + "-" + s), row[0], row[1], Double.parseDouble(row[4]), !row[8].equals("FALSE"), row[18], -1, -1, -1, s, season));
+                            temp_products.add(new ProductTemp((row[20] + "-" + season + "-" + s), (row[2] + "-" + season + "-" + s), Double.parseDouble(row[4])));
                             count ++;
                             if (count >= 1000000){
                                 break outerLoop;
@@ -62,6 +67,7 @@ public class DataController {
                 }
             }
             productService.addAll(products);
+            orderSetup.addAll(temp_products);
             return "Success!";
         } catch (Exception e) {
             System.out.println(e);

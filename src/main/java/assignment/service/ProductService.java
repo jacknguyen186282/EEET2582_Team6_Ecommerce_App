@@ -17,7 +17,8 @@ import java.util.*;
 public class ProductService {
     @Autowired
     ProductRepo productRepo;
-
+    @Autowired
+    SQSService sqsService;
     /**
      * Add a product to database based on the given object
      * @param product Product
@@ -26,6 +27,7 @@ public class ProductService {
     public String addProduct(Product product){
         if (getProductById(product.getId()).isPresent()) return "Duplicated ID!";
         this.productRepo.save(product);
+        this.sqsService.postProductQueue(product, "add");
         return "Add Successful!";
     }
 
@@ -47,6 +49,7 @@ public class ProductService {
      */
     public void deleteByProductId(String id){
         this.productRepo.deleteById(id);
+        this.sqsService.deleteProductQueue(id);
     }
 
     /**
@@ -64,6 +67,7 @@ public class ProductService {
      */
     public void updateProduct(Product product){
         this.productRepo.save(product);
+        this.sqsService.postProductQueue(product, "update");
     }
 
     public boolean isExist(){

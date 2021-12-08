@@ -7,6 +7,6 @@ import org.springframework.cloud.aws.autoconfigure.context.ContextStackAutoConfi
 public class Main {
     public static void main(String[] args) {
         SpringApplication.run(Main.class,args);
-        System.out.print("\n**********************************\nAccess: http://localhost:8080/\n**********************************\n");
+        System.out.print("\n**********************************\nAccess: http://localhost:8081/\n**********************************\n");
     }
 }
