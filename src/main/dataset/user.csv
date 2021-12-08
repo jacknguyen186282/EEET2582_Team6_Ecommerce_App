@@ -1,0 +1,8 @@
+id,email,username,gender,admin
+1,bao@gmail.com,Bao,M,FALSE
+2,phu@gmail.com,Phu,M,FALSE
+3,binh@gmail.com,Binh,M,FALSE
+4,duy@gmail.com,Duy,M,FALSE
+5,long@gmail.com,Long,M,FALSE
+6,minh@gmail.com,Minh,M,FALSE
+7,admin@gmail.com,Admin,F,TRUE

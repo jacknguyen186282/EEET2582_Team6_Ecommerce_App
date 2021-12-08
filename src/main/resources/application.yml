@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8082
 cloud:
   aws:
     region:
@@ -9,7 +9,7 @@ cloud:
       access-key: AKIA2LPO5M2FEENI6PXV
       secret-key: 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
     end-point:
-      uri: https://sqs.us-west-2.amazonaws.com/711855007370/product
+      uri: https://sqs.us-west-2.amazonaws.com/711855007370/user
 
 logging:
   level:

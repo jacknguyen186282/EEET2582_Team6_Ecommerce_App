@@ -1,7 +1,7 @@
 package assignment.service;
 
-import assignment.entity.ProductTemp;
-import assignment.repository.ProductTempRepo;
+import assignment.entity.UserTemp;
+import assignment.repository.UserTempRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +12,9 @@ import java.util.List;
 @Service
 public class OrderSetup {
     @Autowired
-    ProductTempRepo productTempRepo;
-    public void addAll(List<ProductTemp> products){
-        this.productTempRepo.saveAll(products);
+    UserTempRepo userTempRepo;
+    public void addAll(List<UserTemp> userTemps){
+        this.userTempRepo.saveAll(userTemps);
     }
 
 }

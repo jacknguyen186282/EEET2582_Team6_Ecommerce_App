@@ -1,8 +1,8 @@
 package assignment.controller;
-import assignment.entity.Product;
-import assignment.entity.ProductTemp;
+import assignment.entity.User;
+import assignment.entity.UserTemp;
 import assignment.service.OrderSetup;
-import assignment.service.ProductService;
+import assignment.service.UserService;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.*;
 @CrossOrigin(origins = "*")
 public class DataController {
     @Autowired
-    private ProductService productService;
+    private UserService userService;
     @Autowired
     private OrderSetup orderSetup;
     /**
@@ -24,50 +24,22 @@ public class DataController {
      */
     @RequestMapping(path = "/setupDatabase", method = RequestMethod.POST)
     public String setDatabase(){
-        ArrayList<Product> products = new ArrayList<>();
-        ArrayList<ProductTemp> temp_products = new ArrayList<>();
-        if (productService.isExist()) return "Already initialized database!";
-        String[] arr = {"women", "men", "kids", "bags", "beauty", "accessories", "house", "shoes"};
+        ArrayList<User> users = new ArrayList<>();
+        ArrayList<UserTemp> temp_users = new ArrayList<>();
+        if (userService.isExist()) return "Already initialized database!";
         System.out.println("Adding...!");
         try {
             String[] row;
-            String[] size;
-            int count = 0;
-            String[] seasons = {"Spring", "Summer", "Autumn ", "Winter"};
-
-            outerLoop:
-            for (String category : arr) {
-                FileReader filereader;
-
-                // create csvReader object and skip first Line
-                CSVReader csvReader;
-
-                if (category.equals("beauty") || category.equals("house"))
-                    size = new String[]{"red", "pink", "nude", "orange"};
-                else {
-                    size = new String[]{"s", "m", "l", "xl", "oversize"};
-                }
-
-                // we are going to read data line by line
-                for (String season: seasons) {
-                    for (String s : size) {
-                        filereader = new FileReader("./src/main/dataset/" + category + ".csv");
-                        csvReader = new CSVReaderBuilder(filereader)
-                                .withSkipLines(1)
-                                .build();
-                        while ((row = csvReader.readNext()) != null){
-                            products.add(new Product((row[20] + "-" + season + "-" + s), (row[2] + "-" + season + "-" + s), row[0], row[1], Double.parseDouble(row[4]), !row[8].equals("FALSE"), row[18], -1, -1, -1, s, season));
-                            temp_products.add(new ProductTemp((row[20] + "-" + season + "-" + s), (row[2] + "-" + season + "-" + s), Double.parseDouble(row[4])));
-                            count ++;
-                            if (count >= 1000000){
-                                break outerLoop;
-                            }
-                        }
-                    }
-                }
+            FileReader filereader = new FileReader("./src/main/dataset/user.csv");
+            CSVReader csvReader = new CSVReaderBuilder(filereader)
+                    .withSkipLines(1)
+                    .build();
+            while ((row = csvReader.readNext()) != null){
+                users.add(new User(row[0], row[1], row[2], row[3].equals("M"), row[4].equals("TRUE")));
+                temp_users.add(new UserTemp(row[0], row[1],  row[3].equals("M")));
             }
-            productService.addAll(products);
-            orderSetup.addAll(temp_products);
+            userService.addAll(users);
+            orderSetup.addAll(temp_users);
             return "Success!";
         } catch (Exception e) {
             System.out.println(e);
