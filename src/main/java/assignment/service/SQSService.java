@@ -1,6 +1,7 @@
 package assignment.service;
 
 import assignment.entity.Product;
+import assignment.entity.User;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,24 +19,35 @@ import java.util.Map;
 public class SQSService {
     @Autowired
     private QueueMessagingTemplate queueMessagingTemplate;
-
-    @Value("${cloud.aws.end-point.uri}")
-    private String endpoint;
-
-    public void postProductQueue(Product product, String action) {
-        Map<String, String> map = new HashMap<>();
-        map.put("id", product.getId());
-        map.put("name", product.getName());
-        map.put("price", String.valueOf(product.getPrice()));
-        JSONObject json = new JSONObject(map);
-        queueMessagingTemplate.send(endpoint, MessageBuilder.withPayload(action + "----------" + json.toString()).build());
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private UserService userService;
+    @SqsListener("product")
+    public void loadMessageFromProductSQS(String message)  {
+        try {
+            JSONObject obj = new JSONObject(message.split("----------")[1]);
+            String action = message.split("----------")[0];
+            if (action.equals("add")) productService.addProduct(new Product((String) obj.get("id"), (String) obj.get("name"), Double.parseDouble((String) obj.get("price"))));
+            else if (action.equals("update")) productService.updateProduct(new Product((String) obj.get("id"), (String) obj.get("name"), Double.parseDouble((String) obj.get("price"))));
+            else productService.deleteByProductId((String) obj.get("id"));
+        }
+        catch (Exception e){
+            System.out.println("Receive message from SQS Queue: Dummy message");
+        }
     }
 
-    public void deleteProductQueue(String id) {
-        Map<String, String> map = new HashMap<>();
-        map.put("id", id);
-        JSONObject json = new JSONObject(map);
-        queueMessagingTemplate.send(endpoint, MessageBuilder.withPayload("delete----------" + json.toString()).build());
+    @SqsListener("user")
+    public void loadMessageFromUserSQS(String message)  {
+        try {
+            JSONObject obj = new JSONObject(message.split("----------")[1]);
+            String action = message.split("----------")[0];
+            if (action.equals("add")) userService.addUser(new User((String) obj.get("id"), (String) obj.get("email"), Boolean.getBoolean((String) obj.get("gender"))));
+            else if (action.equals("update")) userService.updateUser(new User((String) obj.get("id"), (String) obj.get("email"), Boolean.getBoolean((String) obj.get("gender"))));
+            else userService.deleteByUserId((String) obj.get("id"));
+        }
+        catch (Exception e){
+            System.out.println("Receive message from SQS Queue: Dummy message");
+        }
     }
-
 }

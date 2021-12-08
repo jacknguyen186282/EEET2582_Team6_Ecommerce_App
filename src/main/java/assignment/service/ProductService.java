@@ -17,31 +17,16 @@ import java.util.*;
 public class ProductService {
     @Autowired
     ProductRepo productRepo;
-    @Autowired
-    SQSService sqsService;
+
     /**
      * Add a product to database based on the given object
      * @param product Product
      * @return Request's status
      */
-    public String addProduct(Product product){
-        if (getProductById(product.getId()).isPresent()) return "Duplicated ID!";
+    public void addProduct(Product product){
         this.productRepo.save(product);
-        this.sqsService.postProductQueue(product, "add");
-        return "Add Successful!";
     }
 
-    public void addAll(List<Product> products){
-        this.productRepo.saveAll(products);
-    }
-
-    /**
-     * Get all products from database
-     * @return List of products
-     */
-    public List<Product> getAllProducts(int current_page){
-        return this.productRepo.findAll(PageRequest.of(current_page,10, Sort.by("id"))).getContent();
-    }
 
     /**
      * Delete a product by given id
@@ -49,16 +34,6 @@ public class ProductService {
      */
     public void deleteByProductId(String id){
         this.productRepo.deleteById(id);
-        this.sqsService.deleteProductQueue(id);
-    }
-
-    /**
-     * Get all information of the product based on the given id
-     * @param id String
-     * @return Product
-     */
-    public Optional<Product> getProductById(String id){
-        return productRepo.findById(id);
     }
 
     /**
@@ -67,12 +42,9 @@ public class ProductService {
      */
     public void updateProduct(Product product){
         this.productRepo.save(product);
-        this.sqsService.postProductQueue(product, "update");
     }
 
-    public boolean isExist(){
-        Page<Product> products = this.productRepo.findAll(PageRequest.of(0,10));
-        return products.getTotalElements() > 0;
+    public Optional<Product> getProductById(String id){
+        return productRepo.findById(id);
     }
-
 }

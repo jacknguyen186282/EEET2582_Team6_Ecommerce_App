@@ -6,5 +6,4 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductRepo extends JpaRepository<Product, String>{
-    Page<Product> findByCategoryContainsAndSubcategoryContainsAndNameContainsAndIsnewContains(String category, String subcategory, String name, String isnew, Pageable pageable);
 }
