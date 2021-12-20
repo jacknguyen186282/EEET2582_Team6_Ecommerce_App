@@ -1,21 +1,14 @@
 server:
   port: 8082
-cloud:
-  aws:
-    region:
-      static: us-west-2
-      auto: false
-    credentials:
-      access-key: AKIA2LPO5M2FEENI6PXV
-      secret-key: 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
-    end-point:
-      uri: https://sqs.us-west-2.amazonaws.com/711855007370/user
-
-logging:
-  level:
-    com:
-      amazonaws:
-        util:
-          EC2MetadataUtils: error
-        internal:
-          InstanceMetadataServiceResourceFetcher: error
+spring:
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: group_id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
