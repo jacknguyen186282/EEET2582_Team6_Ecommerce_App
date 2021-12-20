@@ -4,26 +4,18 @@ import assignment.entity.Product;
 import assignment.entity.User;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
-import org.springframework.cloud.aws.messaging.listener.annotation.SqsListener;
-import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.Map;
 
 @Transactional
 @Service
 public class SQSService {
     @Autowired
-    private QueueMessagingTemplate queueMessagingTemplate;
-    @Autowired
     private ProductService productService;
     @Autowired
     private UserService userService;
-    @SqsListener("product")
+    @KafkaListener(topics = "product_service", groupId = "group_id")
     public void loadMessageFromProductSQS(String message)  {
         try {
             JSONObject obj = new JSONObject(message.split("----------")[1]);
@@ -37,7 +29,7 @@ public class SQSService {
         }
     }
 
-    @SqsListener("user")
+    @KafkaListener(topics = "user_service", groupId = "group_id")
     public void loadMessageFromUserSQS(String message)  {
         try {
             JSONObject obj = new JSONObject(message.split("----------")[1]);
