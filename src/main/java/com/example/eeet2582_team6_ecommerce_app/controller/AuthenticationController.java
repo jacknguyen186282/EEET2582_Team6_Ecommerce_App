@@ -37,6 +37,7 @@ public class AuthenticationController {
         if (authorizationResponse.getStatus().equals("error")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(authorizationResponse);
         }
+
         authorizationResponse = authorizationService.verifyIdentityToken(tokens.get("id"));
         if (authorizationResponse.getStatus().equals("error")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(authorizationResponse);
