@@ -3,6 +3,8 @@ package com.example.eeet2582_team6_ecommerce_app.service;
 import com.example.eeet2582_team6_ecommerce_app.dto.AuthorizationResponse;
 import lombok.AllArgsConstructor;
 import lombok.Cleanup;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
@@ -83,7 +85,7 @@ public class AuthorizationService {
         return new AuthorizationResponse("", "success");
     }
 
-    public Map<String, String> obtainTokenHeader(String header) {
+    public Map<String, String> obtainTokenFromHeader(String header) {
         String[] headerSplit = header.split(" ");
 
         if (headerSplit.length != 3) {
@@ -94,5 +96,30 @@ public class AuthorizationService {
         tokens.put("access", headerSplit[1]);
         tokens.put("id", headerSplit[2]);
         return tokens;
+    }
+
+    public AuthorizationResponse authorize(String header) {
+        Map<String, String> tokens = obtainTokenFromHeader(header);
+        AuthorizationResponse authorizationResponse = new AuthorizationResponse();
+
+        if (tokens == null) {
+            authorizationResponse.setStatus("error");
+            authorizationResponse.setError("Authorization header invalid or not found");
+            return authorizationResponse;
+        }
+
+        authorizationResponse = verifyAccessToken(tokens.get("access"));
+        if (authorizationResponse.getStatus().equals("error")) {
+            return authorizationResponse;
+        }
+
+        authorizationResponse = verifyIdentityToken(tokens.get("id"));
+        if (authorizationResponse.getStatus().equals("error")) {
+            return authorizationResponse;
+        }
+
+        authorizationResponse.setError(null);
+        authorizationResponse.setStatus("success");
+        return authorizationResponse;
     }
 }

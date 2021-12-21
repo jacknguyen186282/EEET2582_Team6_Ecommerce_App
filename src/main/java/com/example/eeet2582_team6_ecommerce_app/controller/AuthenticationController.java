@@ -1,6 +1,7 @@
 package com.example.eeet2582_team6_ecommerce_app.controller;
 
 import com.example.eeet2582_team6_ecommerce_app.dto.AuthorizationResponse;
+import com.example.eeet2582_team6_ecommerce_app.dto.Response;
 import com.example.eeet2582_team6_ecommerce_app.service.AuthorizationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,26 +24,12 @@ public class AuthenticationController {
     private JwtDecoder jwtDecoder;
 
     @GetMapping("/api/authorize")
-    public ResponseEntity<AuthorizationResponse> authorize(@RequestHeader(value = "Authorization") String authorizationHeader) {
-        AuthorizationResponse authorizationResponse = new AuthorizationResponse();
-
-        Map<String, String> tokens = authorizationService.obtainTokenHeader(authorizationHeader);
-        if (tokens == null) {
-            authorizationResponse.setStatus("error");
-            authorizationResponse.setError("Authorization header invalid or not found");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(authorizationResponse);
-        }
-
-        authorizationResponse = authorizationService.verifyAccessToken(tokens.get("access"));
+    public ResponseEntity<Response> authorize(@RequestHeader(value = "Authorization") String authorizationHeader) {
+        AuthorizationResponse authorizationResponse = authorizationService.authorize(authorizationHeader);
         if (authorizationResponse.getStatus().equals("error")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(authorizationResponse);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response(403, authorizationResponse.getError()));
         }
-
-        authorizationResponse = authorizationService.verifyIdentityToken(tokens.get("id"));
-        if (authorizationResponse.getStatus().equals("error")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(authorizationResponse);
-        }
-        return ResponseEntity.ok().body(authorizationResponse);
+        return ResponseEntity.ok().body(new Response(200, null));
     }
 
     @GetMapping("/api/decode")
