@@ -8,12 +8,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/product")
-public class ProductController extends BaseController {
+@RequestMapping("/user")
+public class UserController extends BaseController {
     private AuthorizationService authorizationService;
 
-    public ProductController(WebClient webClient) {
-        super.microserviceUrl = "http://product:8081";
+    public UserController(WebClient webClient) {
+        super.microserviceUrl = "http://user:8082";
         super.webClient = webClient;
     }
 }

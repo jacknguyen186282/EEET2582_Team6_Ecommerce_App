@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.Objects;
 
@@ -14,17 +15,23 @@ import java.util.Objects;
 public class AuthorizationResponse {
     private String error;
     private String status;
+    private Jwt jwt;
+
+    public AuthorizationResponse(String error, String status) {
+        this.error = error;
+        this.status = status;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AuthorizationResponse that = (AuthorizationResponse) o;
-        return Objects.equals(error, that.error) && Objects.equals(status, that.status);
+        return Objects.equals(error, that.error) && Objects.equals(status, that.status) && Objects.equals(jwt, that.jwt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(error, status);
+        return Objects.hash(error, status, jwt);
     }
 }

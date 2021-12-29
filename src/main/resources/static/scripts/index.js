@@ -1,6 +1,7 @@
 const authDomain = "https://nguyenlong-testing.auth.ap-southeast-1.amazoncognito.com";
 const clientId = "4mpuhie909kgds8i0pcie8kaif";
-const redirectUrl = "http://localhost:5500/pages/authenticate.html";
+const redirectUrl = "http://localhost:5500/pages/signin.html";
+const redirectSignUpUrl = "http://localhost:5500/pages/signup.html";
 const logoutUrl = "http://localhost:5500"
 const scope = "aws.cognito.signin.user.admin+email+openid+phone+profile";
 const responseType = "code";
@@ -30,6 +31,11 @@ signUpBtn.addEventListener("click", async () => {
     signUp();
 })
 
+const getUserInfoBtn = document.querySelector("#get-user-info-btn");
+getUserInfoBtn.addEventListener("click", async () => {
+    await getUserInfo();
+})
+
 function login() {
     localStorage.setItem("redirectUrl", window.location.href);
     window.location.href = `${authDomain}/login?response_type=${responseType}&client_id=${clientId}&redirect_uri=${redirectUrl}&scope=${scope}`;
@@ -37,7 +43,7 @@ function login() {
 
 function signUp() {
     localStorage.setItem("redirectUrl", window.location.href);
-    window.location.href = `${authDomain}/signup?response_type=${responseType}&client_id=${clientId}&redirect_uri=${redirectUrl}&scope=${scope}`;
+    window.location.href = `${authDomain}/signup?response_type=${responseType}&client_id=${clientId}&redirect_uri=${redirectSignUpUrl}&scope=${scope}`;
 }
 
 function logout() {
@@ -54,7 +60,6 @@ async function refreshToken() {
         "client_id": clientId,
         "redirect_uri": redirectUrl
     }
-
     var formBody = [];
     for (var property in content) {
         var encodedKey = encodeURIComponent(property);
@@ -72,6 +77,7 @@ async function refreshToken() {
     });
     
     const body = await response.json();
+    console.log(body);
     localStorage.setItem("access_token", body.access_token);
     localStorage.setItem("id_token", body.id_token);
 }
@@ -87,6 +93,19 @@ async function obtainData() {
         }
     });
 
+    const body = await response.json();
+    console.log(body);
+}
+
+async function getUserInfo() {
+    const accessToken = localStorage.getItem("access_token");
+    
+    const response = await fetch(`${authDomain}/oauth2/userInfo` , {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    })
     const body = await response.json();
     console.log(body);
 }
