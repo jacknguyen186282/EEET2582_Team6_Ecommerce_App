@@ -20,7 +20,7 @@ public class Product{
     public Product(String id, String name, double price){
         this.id = id;
         this.name = name;
-        if (price >= 5) this.price = price;
+        if (price >= 0) this.price = price;
     }
 
     public String getName() {

@@ -34,8 +34,8 @@ public class SQSService {
         try {
             JSONObject obj = new JSONObject(message.split("----------")[1]);
             String action = message.split("----------")[0];
-            if (action.equals("add")) userService.addUser(new User((String) obj.get("id"), (String) obj.get("email"), Boolean.getBoolean((String) obj.get("gender"))));
-            else if (action.equals("update")) userService.updateUser(new User((String) obj.get("id"), (String) obj.get("email"), Boolean.getBoolean((String) obj.get("gender"))));
+            if (action.equals("add")) userService.addUser(new User((String) obj.get("email"), Boolean.getBoolean((String) obj.get("gender"))));
+            else if (action.equals("update")) userService.updateUser(new User((String) obj.get("email"), Boolean.getBoolean((String) obj.get("gender"))));
             else userService.deleteByUserId((String) obj.get("id"));
         }
         catch (Exception e){

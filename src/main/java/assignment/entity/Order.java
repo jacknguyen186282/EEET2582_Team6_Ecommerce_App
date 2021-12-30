@@ -22,7 +22,7 @@ public class Order {
     public Order() {}
 
     public Order(String userid, String product_list){
-        this.id = String.valueOf((new Timestamp(System.currentTimeMillis())).getTime()) + userid;
+        this.id = String.valueOf((new Timestamp(System.currentTimeMillis())).getTime()) + "-" + userid;
         this.product_list = product_list;
         this.userid = userid;
     }
