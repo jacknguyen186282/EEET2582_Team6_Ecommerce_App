@@ -3,6 +3,8 @@ package assignment.controller;
 import assignment.entity.Product;
 import assignment.service.ProductService;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +24,17 @@ public class ProductController {
      * @return Status of request
      */
     @RequestMapping(path = "/addProduct", method = RequestMethod.POST)
-    public String addProduct(@RequestBody Product product){
+    public Map<String, Object> addProduct(@RequestBody Product product){
+        Map<String, Object> response = new HashMap<>();
         try {
-            return productService.addProduct(product);
+            productService.addProduct(product);
+            response.put("data", "Add Successful!");
+            response.put("status", 200);
+            return response;
         }catch (Exception e){
-            return "Add Failed!";
+            response.put("error", "SERVER_ERROR");
+            response.put("status", 500);
+            return response;
         }
     }
 
@@ -35,8 +43,17 @@ public class ProductController {
      * @return List of products
      */
     @RequestMapping(value = "/getProducts", method = RequestMethod.GET)
-    public List<Product> getAllProducts(@RequestParam int page){
-        return productService.getAllProducts(page);
+    public Map<String, Object> getAllProducts(@RequestParam String category, @RequestParam String subcategory, @RequestParam String name, @RequestParam String isnew, @RequestParam String sort, @RequestParam int page){
+        Map<String, Object> response = new HashMap<>();
+        try {
+            response.put("data", productService.getAllProducts(category, subcategory, name, isnew, sort, page));
+            response.put("status", 200);
+            return response;
+        }catch (Exception e){
+            response.put("error", "SERVER_ERROR");
+            response.put("status", 500);
+            return response;
+        }
     }
 
 
@@ -46,13 +63,18 @@ public class ProductController {
      * @return Request's status
      */
     @RequestMapping(path = "/deleteProduct", method = RequestMethod.DELETE)
-    public String deleteProductById(@RequestParam String id) {
+    public Map<String, Object> deleteProductById(@RequestParam String id) {
+        Map<String, Object> response = new HashMap<>();
         try {
             productService.deleteByProductId(id);
+            response.put("data", "Delete Successful!");
+            response.put("status", 200);
+            return response;
         }catch (Exception e){
-            return "Delete Failed!";
+            response.put("error", "PRODUCT_NOT_FOUND");
+            response.put("status", 400);
+            return response;
         }
-        return "Delete Successful!";
     }
 
     /**
@@ -61,13 +83,16 @@ public class ProductController {
      * @return a list of product
      */
     @RequestMapping(path = "/getProductById", method = RequestMethod.GET)
-    public Optional<Product> getProductById(@RequestParam String id) {
+    public Map<String, Object> getProductById(@RequestParam String id) {
+        Map<String, Object> response = new HashMap<>();
         try {
-            return productService.getProductById(id);
+            response.put("data", productService.getProductById(id));
+            response.put("status", 200);
         }catch (Exception e){
-            return Optional.empty();
+            response.put("error", "PRODUCT_NOT_FOUND");
+            response.put("status", 400);
         }
-
+        return response;
     }
 
     /**
@@ -76,13 +101,18 @@ public class ProductController {
      * @return Request's status
      */
     @RequestMapping(path = "/updateProduct", method = RequestMethod.POST)
-    public String updateProduct(@RequestBody Product product) {
+    public Map<String, Object> updateProduct(@RequestBody Product product) {
+        Map<String, Object> response = new HashMap<>();
         try {
             productService.updateProduct(product);
+            response.put("data", "Update Successful!");
+            response.put("status", 200);
+            return response;
         }catch (Exception e){
-            return "Update Failed!";
+            response.put("error", "SERVER_ERROR");
+            response.put("status", 500);
+            return response;
         }
-        return "Update Successful!";
     }
 
 }

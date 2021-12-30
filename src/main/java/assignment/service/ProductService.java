@@ -39,8 +39,17 @@ public class ProductService {
      * Get all products from database
      * @return List of products
      */
-    public List<Product> getAllProducts(int current_page){
-        return this.productRepo.findAll(PageRequest.of(current_page,10, Sort.by("id"))).getContent();
+    public List<Product> getAllProducts(String category, String subcategory, String name, String isnew, String sort, int current_page){
+        String sortType = "";
+        if (sort != null) sortType = sort;
+
+        return this.productRepo.findByCategoryContainsAndSubcategoryContainsAndNameContainsAndIsnewContains(
+                category,
+                subcategory,
+                name,
+                isnew,
+                PageRequest.of(current_page,10, (sortType.equals("")) ? Sort.by("id") : (sortType.equals("asc")) ? Sort.by("price") : Sort.by("price").descending())
+        ).getContent();
     }
 
     /**
