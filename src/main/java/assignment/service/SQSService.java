@@ -19,7 +19,6 @@ public class SQSService {
 
     public void postUserQueue(User user, String action) {
         Map<String, String> map = new HashMap<>();
-        map.put("id", user.getEmail());
         map.put("email", user.getEmail());
         map.put("gender", user.getGender());
         JSONObject json = new JSONObject(map);
