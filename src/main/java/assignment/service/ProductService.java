@@ -26,8 +26,8 @@ public class ProductService {
      */
     public String addProduct(Product product){
         if (getProductById(product.getId()).isPresent()) return "Duplicated ID!";
-        this.productRepo.save(product);
         this.sqsService.postProductQueue(product, "add");
+        this.productRepo.save(product);
         return "Add Successful!";
     }
 
@@ -57,8 +57,8 @@ public class ProductService {
      * @param id String
      */
     public void deleteByProductId(String id){
-        this.productRepo.deleteById(id);
         this.sqsService.deleteProductQueue(id);
+        this.productRepo.deleteById(id);
     }
 
     /**
@@ -75,8 +75,8 @@ public class ProductService {
      * @param product Product
      */
     public void updateProduct(Product product){
-        this.productRepo.save(product);
         this.sqsService.postProductQueue(product, "update");
+        this.productRepo.save(product);
     }
 
     public boolean isExist(){
