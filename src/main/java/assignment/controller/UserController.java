@@ -17,57 +17,58 @@ public class UserController {
     private UserService userService;
 
     /**
-     * API for adding a user
-     * @param user user
-     * @return Status of request
-     */
-    @RequestMapping(path = "/addUser", method = RequestMethod.POST)
-    public String addUser(@RequestBody User user){
-        try {
-            return userService.addUser(user);
-        }catch (Exception e){
-            return "Add Failed!";
-        }
-    }
-
-    /**
      * API for getting a list of user with filters (if any)
      * @return List of products
      */
     @RequestMapping(value = "/getUsers", method = RequestMethod.GET)
-    public List<User> getUsers(@RequestParam int page){
-        return userService.getAllUsers(page);
+    public  Map<String, Object> getUsers(@RequestParam int page){
+        Map<String, Object> response = new HashMap<>();
+        try {
+            response.put("data", userService.getAllUsers(page));
+            response.put("status", 200);
+        }catch (Exception e){
+            response.put("error", "SERVER_ERROR");
+            response.put("status", 500);
+        }
+        return response;
     }
 
 
     /**
-     * API for deleting a user with the given id
-     * @param id String
+     * API for deleting a user with the given email
+     * @param email String
      * @return Request's status
      */
     @RequestMapping(path = "/deleteUser", method = RequestMethod.DELETE)
-    public String deleteUser(@RequestParam String id) {
+    public Map<String, Object> deleteUser(@RequestParam String email) {
+        Map<String, Object> response = new HashMap<>();
         try {
-            userService.deleteByUserId(id);
+            userService.deleteByUserId(email);
+            response.put("data", "Delete Successful!");
+            response.put("status", 200);
         }catch (Exception e){
-            return "Delete Failed!";
+            response.put("error", "USER_NOT_FOUND");
+            response.put("status", 400);
         }
-        return "Delete Successful!";
+        return response;
     }
 
     /**
-     * Get a user by ID with its relations (related products)
-     * @param id String
+     * Get a user by email
+     * @param email String
      * @return a list of user
      */
     @RequestMapping(path = "/getUserById", method = RequestMethod.GET)
-    public Optional<User> getUserById(@RequestParam String id) {
+    public Map<String, Object> getUserById(@RequestParam String email) {
+        Map<String, Object> response = new HashMap<>();
         try {
-            return userService.getUserById(id);
+            response.put("data", userService.getUserById(email));
+            response.put("status", 200);
         }catch (Exception e){
-            return Optional.empty();
+            response.put("error", "USER_NOT_FOUND");
+            response.put("status", 400);
         }
-
+        return response;
     }
 
     /**
@@ -76,13 +77,35 @@ public class UserController {
      * @return Request's status
      */
     @RequestMapping(path = "/updateUser", method = RequestMethod.POST)
-    public String updateUser(@RequestBody User user) {
+    public Map<String, Object> updateUser(@RequestBody User user) {
+        Map<String, Object> response = new HashMap<>();
         try {
             userService.updateUser(user);
+            response.put("data", "Update Successful!");
+            response.put("status", 200);
         }catch (Exception e){
-            return "Update Failed!";
+            response.put("error", "SERVER_ERROR");
+            response.put("status", 500);
         }
-        return "Update Successful!";
+        return response;
     }
 
+    /**
+     * API for adding a user
+     * @param user user
+     * @return Status of request
+     */
+    @RequestMapping(path = "/login", method = RequestMethod.POST)
+    public Map<String, Object> login(@RequestBody User user) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            userService.addUser(user);
+            response.put("data", "Add Successful!");
+            response.put("status", 200);
+        }catch (Exception e){
+            response.put("error", "SERVER_ERROR");
+            response.put("status", 500);
+        }
+        return response;
+    }
 }

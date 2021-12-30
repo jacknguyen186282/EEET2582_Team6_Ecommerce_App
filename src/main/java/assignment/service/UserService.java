@@ -23,15 +23,11 @@ public class UserService {
      * @param user user
      * @return Request's status
      */
-    public String addUser(User user){
-        if (getUserById(user.getId()).isPresent()) return "Duplicated ID!";
-        this.userRepo.save(user);
-        this.sqsService.postUserQueue(user, "add");
-        return "Add Successful!";
-    }
-
-    public void addAll(List<User> users){
-        this.userRepo.saveAll(users);
+    public void addUser(User user){
+        if (getUserById(user.getEmail()).isEmpty()) {
+            this.sqsService.postUserQueue(user, "add");
+            this.userRepo.save(user);
+        }
     }
 
     /**
@@ -39,25 +35,25 @@ public class UserService {
      * @return List of products
      */
     public List<User> getAllUsers(int current_page){
-        return this.userRepo.findAll(PageRequest.of(current_page,10, Sort.by("id"))).getContent();
+        return this.userRepo.findAll(PageRequest.of(current_page,10, Sort.by("email"))).getContent();
     }
 
     /**
      * Delete a user by given id
-     * @param id String
+     * @param email String
      */
-    public void deleteByUserId(String id){
-        this.userRepo.deleteById(id);
-        this.sqsService.deleteUserQueue(id);
+    public void deleteByUserId(String email){
+        this.sqsService.deleteUserQueue(email);
+        this.userRepo.deleteById(email);
     }
 
     /**
      * Get all information of the user based on the given id
-     * @param id String
+     * @param email String
      * @return user
      */
-    public Optional<User> getUserById(String id){
-        return userRepo.findById(id);
+    public Optional<User> getUserById(String email){
+        return userRepo.findById(email);
     }
 
     /**
@@ -65,13 +61,8 @@ public class UserService {
      * @param user user
      */
     public void updateUser(User user){
-        this.userRepo.save(user);
         this.sqsService.postUserQueue(user, "update");
-    }
-
-    public boolean isExist(){
-        Page<User> Users = this.userRepo.findAll(PageRequest.of(0,10));
-        return Users.getTotalElements() > 0;
+        this.userRepo.save(user);
     }
 
 }

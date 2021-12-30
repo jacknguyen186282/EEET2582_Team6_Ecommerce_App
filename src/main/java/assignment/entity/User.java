@@ -7,58 +7,35 @@ import javax.persistence.*;
 public class User {
     @Id
     @Column
-    private String id;
-
-    @Column (nullable = false, length = 1024)
-    private String username;
-
-    @Column (nullable = false, length = 1024)
     private String email;
-
-    private boolean gender;
-
+    @Column
+    private String gender = (Math.random() >= 0.5) ? "Male" : "Female";
+    @Column
     private boolean isAdmin;
 
     public User(){}
 
-    public User(String id, String email,String username, boolean gender, boolean isAdmin){
-        this.id = id;
-        this.username = username;
+    public User(String email){
         this.email = email;
+        System.out.println(email.toLowerCase());
+        this.isAdmin = email.toLowerCase().contains("admin");
+    }
+
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
         this.gender = gender;
-        this.isAdmin = isAdmin;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public boolean isGender() {
-        return gender;
-    }
-
     public boolean isAdmin() {
         return isAdmin;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setGender(boolean gender) {
-        this.gender = gender;
     }
 
     public void setEmail(String email) {
