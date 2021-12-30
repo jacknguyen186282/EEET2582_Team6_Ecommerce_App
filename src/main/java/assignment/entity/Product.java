@@ -1,13 +1,14 @@
 package assignment.entity;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "product_db")
 public class Product{
     @Id
     @Column
-    private String id;
+    private String id = (String.valueOf ((new Timestamp(System.currentTimeMillis())).getTime()) + String.valueOf((int)(Math.random() * Integer.MAX_VALUE)));
 
     @Column (nullable = false, length = 1024)
     private String name;
@@ -39,7 +40,7 @@ public class Product{
     public Product(){}
 
     public Product(String id, String name, String category, String subcategory, double price, boolean isnew, String image_url, int stock, String description){
-        this.id = id;
+        if (id != null && !id.equals("")) this.id = id;
         this.name = name;
         this.category = (category.equals("null") || category.equals("")) ? null : category;
         this.image_url = (image_url.equals("null") || image_url.equals("")) ? null : image_url;
