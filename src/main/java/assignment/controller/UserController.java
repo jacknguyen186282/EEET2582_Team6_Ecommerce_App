@@ -62,11 +62,18 @@ public class UserController {
     public Map<String, Object> getUserById(@RequestParam String email) {
         Map<String, Object> response = new HashMap<>();
         try {
-            response.put("data", userService.getUserById(email));
-            response.put("status", 200);
+            Optional<User> user = userService.getUserById(email);
+            if (user.isPresent()){
+                response.put("data", user.get());
+                response.put("status", 200);
+            }
+            else{
+                response.put("error", "USER_NOT_FOUND");
+                response.put("status", 400);
+            }
         }catch (Exception e){
-            response.put("error", "USER_NOT_FOUND");
-            response.put("status", 400);
+            response.put("error", "SERVER_ERROR");
+            response.put("status", 500);
         }
         return response;
     }
