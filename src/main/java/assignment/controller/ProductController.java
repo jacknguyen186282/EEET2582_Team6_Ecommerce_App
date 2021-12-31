@@ -86,11 +86,18 @@ public class ProductController {
     public Map<String, Object> getProductById(@RequestParam String id) {
         Map<String, Object> response = new HashMap<>();
         try {
-            response.put("data", productService.getProductById(id));
-            response.put("status", 200);
+            Optional<Product> product = productService.getProductById(id);
+            if (product.isPresent()) {
+                response.put("data", product.get());
+                response.put("status", 200);
+            }
+            else {
+                response.put("error", "PRODUCT_NOT_FOUND");
+                response.put("status", 400);
+            }
         }catch (Exception e){
-            response.put("error", "PRODUCT_NOT_FOUND");
-            response.put("status", 400);
+            response.put("error", "SERVER_ERROR");
+            response.put("status", 500);
         }
         return response;
     }
