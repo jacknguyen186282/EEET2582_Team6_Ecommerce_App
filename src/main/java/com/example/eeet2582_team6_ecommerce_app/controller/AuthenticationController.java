@@ -20,19 +20,19 @@ public class AuthenticationController {
     private AuthorizationService authorizationService;
     private JwtDecoder jwtDecoder;
 
-    @GetMapping("/api/authorize")
-    public ResponseEntity<Response> authorize(@RequestHeader(value = "Authorization") String authorizationHeader) {
-        AuthorizationResponse authorizationResponse = authorizationService.authorize(authorizationHeader);
-        if (authorizationResponse.getStatus().equals("error")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response(403, authorizationResponse.getError()));
-        }
-        return ResponseEntity.ok().body(new Response(200, null));
-    }
-
-    @GetMapping("/api/decode")
-    public Jwt authorizeCode(@RequestParam String token) {
-        return jwtDecoder.decode(token);
-    }
+//    @GetMapping("/api/authorize")
+//    public ResponseEntity<Response> authorize(@RequestHeader(value = "Authorization") String authorizationHeader) {
+//        AuthorizationResponse authorizationResponse = authorizationService.authorize(authorizationHeader);
+//        if (authorizationResponse.getStatus().equals("error")) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response(403, authorizationResponse.getError()));
+//        }
+//        return ResponseEntity.ok().body(new Response(200, null));
+//    }
+//
+//    @GetMapping("/api/decode")
+//    public Jwt authorizeCode(@RequestParam String token) {
+//        return jwtDecoder.decode(token);
+//    }
 
     @PostMapping("/api/signup")
     public ResponseEntity<Response> signUp(@RequestHeader(value = "Authorization") String authorizationHeader,
@@ -45,22 +45,28 @@ public class AuthenticationController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @GetMapping("/api/verifyAdmin")
-    public ResponseEntity<Response> verifyAdmin(@RequestHeader(value = "Authorization") String authorizationHeader) {
-        AuthorizationResponse authorizationResponse = authorizationService.authorize(authorizationHeader);
-        if (authorizationResponse.getStatus().equals("error")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response(403, authorizationResponse.getError()));
-        }
-
-        Map<String, String> token = authorizationService.obtainTokenFromHeader(authorizationHeader);
-        String email = authorizationService.getEmailFromIdToken(token.get("id"));
-        Boolean isAdmin = authorizationService.isAdmin(email);
-        Map<String, Object> responseData = new HashMap<>();
-        responseData.put("email", email);
-        responseData.put("isAdmin", isAdmin);
-
-        Response response = new Response(200, null, responseData);
-        return ResponseEntity.ok().body(response);
-    }
-
+//    @GetMapping("/api/verifyAdmin")
+//    public ResponseEntity<Response> verifyAdmin(@RequestHeader(value = "Authorization") String authorizationHeader) {
+//        AuthorizationResponse authorizationResponse = authorizationService.authorize(authorizationHeader);
+//        if (authorizationResponse.getStatus().equals("error")) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response(403, authorizationResponse.getError()));
+//        }
+//
+//        Map<String, String> token = authorizationService.obtainTokenFromHeader(authorizationHeader);
+//        String email = authorizationService.getEmailFromIdToken(token.get("id"));
+//        Boolean isAdmin = authorizationService.isAdmin(email);
+//        Map<String, Object> responseData = new HashMap<>();
+//        responseData.put("email", email);
+//        responseData.put("isAdmin", isAdmin);
+//
+//        Response response = new Response(200, null, responseData);
+//        return ResponseEntity.ok().body(response);
+//    }
+//
+//    @GetMapping("/api/user")
+//    public Map<String, Object> isAdmin(@RequestParam String email) {
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("isAdmin", authorizationService.isAdmin(email));
+//        return response;
+//    }
 }

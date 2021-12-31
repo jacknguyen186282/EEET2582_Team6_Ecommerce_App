@@ -5,25 +5,22 @@ import com.example.eeet2582_team6_ecommerce_app.dto.Response;
 import com.example.eeet2582_team6_ecommerce_app.entity.UserStatus;
 import com.example.eeet2582_team6_ecommerce_app.repository.UserStatusRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @AllArgsConstructor
 public class AuthorizationService {
+    private final String userMicroservice = "http://user:8082";
     private JwtDecoder jwtDecoder;
     private UserStatusRepository userStatusRepository;
-    private final String microserviceUrl = "http://localhost:5000";
     protected WebClient webClient;
 
     private final String ISSUER = "https://cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_b97nG1Rp5";
@@ -138,16 +135,77 @@ public class AuthorizationService {
         return new AuthorizationResponse(null, "success");
     }
 
-    @Transactional
+    public AuthorizationResponse authorizeAdmin(String header) {
+        AuthorizationResponse authorizationResponse = new AuthorizationResponse();
+        String idToken = obtainTokenFromHeader(header).get("id");
+        String email = getEmailFromIdToken(idToken);
+        if (isAdmin(email)) {
+            authorizationResponse.setStatus("success");
+            return authorizationResponse;
+        }
+        authorizationResponse.setStatus("error");
+        authorizationResponse.setError("User is not admin");
+        return authorizationResponse;
+    }
+
+    public AuthorizationResponse authorizeUser(String header, String email) {
+        AuthorizationResponse authorizationResponse = authorize(header);
+        if (authorizationResponse.getStatus().equals("error")) {
+            return authorizationResponse;
+        }
+        authorizationResponse = authorizeAdmin(header);
+        if (authorizationResponse.getStatus().equals("error")) {
+            return authorizationResponse;
+        }
+
+        String idToken = obtainTokenFromHeader(header).get("id");
+        String tokenEmail = getEmailFromIdToken(idToken);
+        if (!tokenEmail.equals(email)) {
+            authorizationResponse.setStatus("error");
+            authorizationResponse.setError("Token email and user email mismatch");
+            return authorizationResponse;
+        }
+
+        authorizationResponse.setStatus("success");
+        authorizationResponse.setError(null);
+        return authorizationResponse;
+    }
+
+    public AuthorizationResponse authorizeAdminUser(String header) {
+        AuthorizationResponse authorizationResponse = authorize(header);
+        if (authorizationResponse.getStatus().equals("error")) {
+            return authorizationResponse;
+        }
+        authorizationResponse = authorizeAdmin(header);
+        return authorizationResponse;
+    }
+
     public boolean isAdmin(String email) {
         Optional<UserStatus> userStatusOptional = userStatusRepository.findById(email);
         if (userStatusOptional.isEmpty()) {
-            return false;
+            System.out.println("Obtain from database");
+            try {
+                // Get user status from database then add to cache
+                Response microserviceResponse = webClient.get().uri(userMicroservice + "/user/getUserById?email=" + email)
+                        .exchangeToMono(clientResponse -> {
+                            return clientResponse.bodyToMono(Response.class);
+                        }).block();
+
+                if (microserviceResponse == null || microserviceResponse.getStatus() != 200 || microserviceResponse.getData() == null) {
+                    return false;
+                }
+                Map<String, Object> user = (Map<String, Object>) microserviceResponse.getData();
+                userStatusRepository.save(new UserStatus(email, (Boolean) user.get("userStatus")));
+                return ((Boolean) user.get("userStatus"));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
         }
+        System.out.println("Obtain from cache");
         return userStatusOptional.get().getAdmin();
     }
 
-    @Transactional
     public Response signUp(Map<String, Object> userInfo, String header) {
         Response response = new Response();
         Map<String, String> tokens = obtainTokenFromHeader(header);
@@ -160,15 +218,19 @@ public class AuthorizationService {
             return response;
         }
 
-        // Add user to authentication database
-        UserStatus userStatus = new UserStatus();
-        userStatus.setEmail((String) userInfo.get("email"));
-        userStatus.setAdmin(false);
-        userStatusRepository.save(userStatus);
+        try {
+            // Add user to authentication cache
+            UserStatus userStatus = new UserStatus();
+            userStatus.setEmail((String) userInfo.get("email"));
+            userStatus.setAdmin(false);
+            userStatusRepository.save(userStatus);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // Add user to User database
         try {
-            Response microserviceResponse = webClient.post().uri(microserviceUrl)
+            Response microserviceResponse = webClient.post().uri(userMicroservice + "/user/login")
                     .body(Mono.just(userInfo), Object.class)
                     .exchangeToMono(clientResponse -> {
                         return clientResponse.bodyToMono(Response.class);

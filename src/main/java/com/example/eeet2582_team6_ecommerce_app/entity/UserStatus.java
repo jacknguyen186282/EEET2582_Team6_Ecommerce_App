@@ -1,25 +1,23 @@
 package com.example.eeet2582_team6_ecommerce_app.entity;
 
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Objects;
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-public class UserStatus {
+@RedisHash("UserStatus")
+public class UserStatus implements Serializable {
+
     @Id
-    @Column
     private String email;
 
-    @Column
     private Boolean admin;
 
     @Override

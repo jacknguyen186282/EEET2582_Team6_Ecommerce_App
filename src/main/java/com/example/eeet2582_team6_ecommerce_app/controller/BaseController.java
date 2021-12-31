@@ -29,6 +29,20 @@ public class BaseController {
         return url;
     }
 
+    protected String createUrl(HttpServletRequest httpServletRequest) {
+        String servletPath = httpServletRequest.getServletPath();
+        String queryString = httpServletRequest.getQueryString();
+        String url = microserviceUrl;
+        if (servletPath != null) {
+            url += servletPath;
+        }
+
+        if (queryString != null) {
+            url += "?" + queryString;
+        }
+        return url;
+    }
+
     @GetMapping("/**")
     public ResponseEntity<Response> getData(HttpServletRequest httpServletRequest) {
         String servletPath = httpServletRequest.getServletPath();

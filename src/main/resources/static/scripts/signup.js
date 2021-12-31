@@ -35,7 +35,7 @@ window.onload = async () => {
     });
     
     if (!response.ok) {
-        window.location.replace(originalUrl);
+        // window.location.replace(originalUrl);
     }
 
     const body = await response.json();
@@ -51,7 +51,7 @@ window.onload = async () => {
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
         localStorage.removeItem("id_token");
-        window.location.replace(originalUrl);
+        // window.location.replace(originalUrl);
     }
 
     const signUpResponse = await fetch(`${gatewayUrl}/api/signup`, {
@@ -64,10 +64,10 @@ window.onload = async () => {
     })
 
     if (!signUpResponse.ok) {
-        window.location.replace(originalUrl);
+        // window.location.replace(originalUrl);
     }
 
-    window.location.replace(originalUrl);
+    // window.location.replace(originalUrl);
 }
 
 async function getUserInfo() {
