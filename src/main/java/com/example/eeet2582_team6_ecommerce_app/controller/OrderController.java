@@ -15,10 +15,11 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping("/order")
 public class OrderController extends BaseController {
-    private AuthorizationService authorizationService;
+    private final AuthorizationService authorizationService;
 
-    public OrderController(WebClient webClient) {
-        super.microserviceUrl = "http://10.245.81.182:8080";
+    public OrderController(WebClient webClient, AuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
+        super.microserviceUrl = "http://localhost:8080";
         super.webClient = webClient;
     }
 

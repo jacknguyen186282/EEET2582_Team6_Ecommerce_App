@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class AuthorizationService {
-    private final String userMicroservice = "http://user:8082";
+    private final String userMicroservice = "http://localhost:8082";
     private JwtDecoder jwtDecoder;
     private UserStatusRepository userStatusRepository;
     protected WebClient webClient;
@@ -154,7 +154,7 @@ public class AuthorizationService {
             return authorizationResponse;
         }
         authorizationResponse = authorizeAdmin(header);
-        if (authorizationResponse.getStatus().equals("error")) {
+        if (authorizationResponse.getStatus().equals("success")) {
             return authorizationResponse;
         }
 
@@ -183,7 +183,6 @@ public class AuthorizationService {
     public boolean isAdmin(String email) {
         Optional<UserStatus> userStatusOptional = userStatusRepository.findById(email);
         if (userStatusOptional.isEmpty()) {
-            System.out.println("Obtain from database");
             try {
                 // Get user status from database then add to cache
                 Response microserviceResponse = webClient.get().uri(userMicroservice + "/user/getUserById?email=" + email)
@@ -202,8 +201,11 @@ public class AuthorizationService {
                 return false;
             }
         }
-        System.out.println("Obtain from cache");
-        return userStatusOptional.get().getAdmin();
+        try {
+            return userStatusOptional.get().getAdmin();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public Response signUp(Map<String, Object> userInfo, String header) {
@@ -218,12 +220,20 @@ public class AuthorizationService {
             return response;
         }
 
+        // Update user status cache when user sign in
         try {
-            // Add user to authentication cache
-            UserStatus userStatus = new UserStatus();
-            userStatus.setEmail((String) userInfo.get("email"));
-            userStatus.setAdmin(false);
-            userStatusRepository.save(userStatus);
+            // Get user status from database then add to cache
+            Response microserviceResponse = webClient.get().uri(userMicroservice + "/user/getUserById?email=" + ((String) userInfo.get("email")))
+                    .exchangeToMono(clientResponse -> {
+                        return clientResponse.bodyToMono(Response.class);
+                    }).block();
+
+            if (microserviceResponse != null && microserviceResponse.getStatus() == 200 && microserviceResponse.getData() != null) {
+                Map<String, Object> user = (Map<String, Object>) microserviceResponse.getData();
+                userStatusRepository.save(new UserStatus((String) userInfo.get("email"), (Boolean) user.get("admin")));
+            } else {
+                userStatusRepository.save(new UserStatus((String) userInfo.get("email"), false));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -235,6 +245,7 @@ public class AuthorizationService {
                     .exchangeToMono(clientResponse -> {
                         return clientResponse.bodyToMono(Response.class);
                     }).block();
+
             return new Response(microserviceResponse.getStatus(), microserviceResponse.getError(), microserviceResponse.getData());
         } catch (Exception e) {
             e.printStackTrace();

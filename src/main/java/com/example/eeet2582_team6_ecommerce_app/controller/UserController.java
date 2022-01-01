@@ -2,24 +2,26 @@ package com.example.eeet2582_team6_ecommerce_app.controller;
 
 import com.example.eeet2582_team6_ecommerce_app.dto.AuthorizationResponse;
 import com.example.eeet2582_team6_ecommerce_app.dto.Response;
+import com.example.eeet2582_team6_ecommerce_app.repository.UserStatusRepository;
 import com.example.eeet2582_team6_ecommerce_app.service.AuthorizationService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/user")
 public class UserController extends BaseController {
-    private AuthorizationService authorizationService;
+    private final AuthorizationService authorizationService;
+    private final UserStatusRepository userStatusRepository;
 
-    public UserController(WebClient webClient) {
-        super.microserviceUrl = "http://user:8082";
+    public UserController(WebClient webClient, AuthorizationService authorizationService, UserStatusRepository userStatusRepository) {
+        this.authorizationService = authorizationService;
+        this.userStatusRepository = userStatusRepository;
+        super.microserviceUrl = "http://localhost:8082";
         super.webClient = webClient;
     }
 

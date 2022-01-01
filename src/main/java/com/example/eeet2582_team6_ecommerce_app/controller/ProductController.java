@@ -9,16 +9,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/product")
 public class ProductController extends BaseController {
-    private AuthorizationService authorizationService;
+    private final AuthorizationService authorizationService;
 
-    public ProductController(WebClient webClient) {
-        super.microserviceUrl = "http://10.245.18.23:8081";
+    public ProductController(WebClient webClient, AuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
+        super.microserviceUrl = "http://localhost:8081";
         super.webClient = webClient;
     }
 
