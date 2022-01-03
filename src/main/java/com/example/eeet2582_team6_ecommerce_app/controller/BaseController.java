@@ -10,6 +10,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,6 +43,23 @@ public class BaseController {
             url += "?" + queryString;
         }
         return url;
+    }
+
+    protected Map<String, Object> getQuery (HttpServletRequest httpServletRequest){
+        String queryString = httpServletRequest.getQueryString();
+        queryString = queryString.replace("?", "");
+        String[] split = queryString.split("&");
+        Map<String, Object> map = new HashMap<>();
+        for (String param:split) {
+            String[] item = param.split("=");
+            if (item.length > 0) {
+                String key = item[0];
+                String value = "";
+                if (item.length == 2) value = item[1];
+                map.put(key, value);
+            }
+        }
+        return map;
     }
 
     @GetMapping("/**")

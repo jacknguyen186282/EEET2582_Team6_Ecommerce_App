@@ -3,18 +3,23 @@ package com.example.eeet2582_team6_ecommerce_app.controller;
 import com.example.eeet2582_team6_ecommerce_app.dto.AuthorizationResponse;
 import com.example.eeet2582_team6_ecommerce_app.dto.Response;
 import com.example.eeet2582_team6_ecommerce_app.service.AuthorizationService;
+import com.example.eeet2582_team6_ecommerce_app.service.SQSService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/product")
 public class ProductController extends BaseController {
     private final AuthorizationService authorizationService;
+    @Autowired
+    SQSService sqsService;
 
     public ProductController(WebClient webClient, AuthorizationService authorizationService) {
         this.authorizationService = authorizationService;
@@ -24,7 +29,7 @@ public class ProductController extends BaseController {
 
     @PostMapping("/addProduct")
     public ResponseEntity<Response> addProduct(HttpServletRequest httpServletRequest,
-                                               @RequestBody Object product,
+                                               @RequestBody Map<String, Object> product,
                                                @RequestHeader(value = "Authorization") String authorizationHeader) {
         AuthorizationResponse authorizationResponse = authorizationService.authorizeAdminUser(authorizationHeader);
         if (authorizationResponse.getStatus().equals("error")) {
@@ -33,12 +38,13 @@ public class ProductController extends BaseController {
 
         // Replace below http with queue
         try {
-            Response microserviceResponse = webClient.post().uri(createUrl(httpServletRequest))
-                    .body(Mono.just(product), Object.class)
-                    .exchangeToMono(clientResponse -> {
-                        return clientResponse.bodyToMono(Response.class);
-                    }).block();
-            return ResponseEntity.status(microserviceResponse.getStatus()).body(microserviceResponse);
+            if (product.containsKey("id") && product.containsKey("name") && product.containsKey("subcategory") && product.containsKey("category")
+                    && product.containsKey("price")  && product.containsKey("rating") && product.containsKey("description")  && product.containsKey("image_url")
+                    && product.containsKey("isnew")  && product.containsKey("stock")){
+                sqsService.postProductQueue(product, "add");
+                return ResponseEntity.status(200).body(new Response(200, "Success!"));
+            }
+            else return ResponseEntity.status(400).body(new Response(400, "Missing params!"));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(new Response(500, "Internal server error"));
@@ -55,11 +61,12 @@ public class ProductController extends BaseController {
 
         // Replace below http with queue
         try {
-            Response microserviceResponse = webClient.delete().uri(createUrl(httpServletRequest))
-                    .exchangeToMono(clientResponse -> {
-                        return clientResponse.bodyToMono(Response.class);
-                    }).block();
-            return ResponseEntity.status(microserviceResponse.getStatus()).body(microserviceResponse);
+            Map<String, Object> map = getQuery(httpServletRequest);
+            if (map.containsKey("id")){
+                sqsService.postProductQueue(map, "delete");
+                return ResponseEntity.status(200).body(new Response(200, "Success!"));
+            }
+            else return ResponseEntity.status(400).body(new Response(400, "Missing params!"));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(new Response(500, "Internal server error"));
@@ -68,7 +75,7 @@ public class ProductController extends BaseController {
 
     @PostMapping("/updateProduct")
     public ResponseEntity<Response> updateProduct(HttpServletRequest httpServletRequest,
-                                                  @RequestBody Object product,
+                                                  @RequestBody Map<String, Object> product,
                                                   @RequestHeader(value = "Authorization") String authorizationHeader) {
         AuthorizationResponse authorizationResponse = authorizationService.authorizeAdminUser(authorizationHeader);
         if (authorizationResponse.getStatus().equals("error")) {
@@ -77,12 +84,13 @@ public class ProductController extends BaseController {
 
         // Replace below http with queue
         try {
-            Response microserviceResponse = webClient.post().uri(createUrl(httpServletRequest))
-                    .body(Mono.just(product), Object.class)
-                    .exchangeToMono(clientResponse -> {
-                        return clientResponse.bodyToMono(Response.class);
-                    }).block();
-            return ResponseEntity.status(microserviceResponse.getStatus()).body(microserviceResponse);
+            if (product.containsKey("id") && product.containsKey("name") && product.containsKey("subcategory") && product.containsKey("category")
+                    && product.containsKey("price")  && product.containsKey("rating") && product.containsKey("description")  && product.containsKey("image_url")
+                    && product.containsKey("isnew")  && product.containsKey("stock")){
+                sqsService.postProductQueue(product, "update");
+                return ResponseEntity.status(200).body(new Response(200, "Success!"));
+            }
+            else return ResponseEntity.status(400).body(new Response(400, "Missing params!"));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(new Response(500, "Internal server error"));

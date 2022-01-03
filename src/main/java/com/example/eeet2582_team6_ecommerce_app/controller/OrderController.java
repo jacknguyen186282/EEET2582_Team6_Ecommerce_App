@@ -3,6 +3,8 @@ package com.example.eeet2582_team6_ecommerce_app.controller;
 import com.example.eeet2582_team6_ecommerce_app.dto.AuthorizationResponse;
 import com.example.eeet2582_team6_ecommerce_app.dto.Response;
 import com.example.eeet2582_team6_ecommerce_app.service.AuthorizationService;
+import com.example.eeet2582_team6_ecommerce_app.service.SQSService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -16,6 +18,9 @@ import java.util.Map;
 @RequestMapping("/order")
 public class OrderController extends BaseController {
     private final AuthorizationService authorizationService;
+
+    @Autowired
+    SQSService sqsService;
 
     public OrderController(WebClient webClient, AuthorizationService authorizationService) {
         this.authorizationService = authorizationService;
@@ -54,12 +59,11 @@ public class OrderController extends BaseController {
 
         // Replace below http with queue
         try {
-            Response microserviceResponse = webClient.post().uri(createUrl(httpServletRequest))
-                    .body(Mono.just(order), Map.class)
-                    .exchangeToMono(clientResponse -> {
-                        return clientResponse.bodyToMono(Response.class);
-                    }).block();
-            return ResponseEntity.status(microserviceResponse.getStatus()).body(microserviceResponse);
+            if (order.containsKey("user_id") && order.containsKey("product_list") && order.containsKey("shipping_address")){
+                sqsService.postOrderQueue(order);
+                return ResponseEntity.status(200).body(new Response(200, "Success!"));
+            }
+            else return ResponseEntity.status(400).body(new Response(400, "Missing params!"));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(new Response(500, "Internal server error"));
