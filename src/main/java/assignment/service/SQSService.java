@@ -21,30 +21,19 @@ public class SQSService {
     @Autowired
     private UserService userService;
 
-    public void postUserQueue(User user, String action) {
+    public void postUserQueue(User user) {
         Map<String, String> map = new HashMap<>();
         map.put("email", user.getEmail());
         map.put("gender", user.getGender());
         JSONObject json = new JSONObject(map);
-        this.kafkaTemplate.send(TOPIC, (action + "----------" + json.toString()));
-    }
-
-    public void deleteUserQueue(String id) {
-        Map<String, String> map = new HashMap<>();
-        map.put("id", id);
-        JSONObject json = new JSONObject(map);
-        this.kafkaTemplate.send(TOPIC,("delete----------" + json.toString()));
+        this.kafkaTemplate.send(TOPIC,  json.toString());
     }
 
     @KafkaListener(topics = "user_request", groupId = "group_id")
     public void loadMessageFromUserSQS(String message)  {
         try {
-            JSONObject obj = new JSONObject(message.split("----------")[1]);
-            String action = message.split("----------")[0];
-
-            if (action.equals("add")) userService.addUser(new User((String) obj.get("email")));
-            else if (action.equals("update")) userService.updateUser(new User((String) obj.get("email")));
-            else userService.deleteByUserId((String) obj.get("id"));
+            JSONObject obj = new JSONObject(message);
+            userService.addUser(new User((String) obj.get("email")));
         }
         catch (Exception e){
             System.out.println("Receive message from SQS Queue: Dummy message");

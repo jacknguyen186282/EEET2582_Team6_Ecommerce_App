@@ -25,7 +25,7 @@ public class UserService {
      */
     public void addUser(User user){
         if (getUserById(user.getEmail()).isEmpty()) {
-            this.sqsService.postUserQueue(user, "add");
+            this.sqsService.postUserQueue(user);
             this.userRepo.save(user);
         }
     }
@@ -39,15 +39,6 @@ public class UserService {
     }
 
     /**
-     * Delete a user by given id
-     * @param email String
-     */
-    public void deleteByUserId(String email){
-        this.sqsService.deleteUserQueue(email);
-        this.userRepo.deleteById(email);
-    }
-
-    /**
      * Get all information of the user based on the given id
      * @param email String
      * @return user
@@ -55,14 +46,4 @@ public class UserService {
     public Optional<User> getUserById(String email){
         return userRepo.findById(email);
     }
-
-    /**
-     * Update a specific user based on the new information
-     * @param user user
-     */
-    public void updateUser(User user){
-        this.sqsService.postUserQueue(user, "update");
-        this.userRepo.save(user);
-    }
-
 }

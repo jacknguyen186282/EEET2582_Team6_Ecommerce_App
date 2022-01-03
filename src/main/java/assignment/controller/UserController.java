@@ -33,26 +33,6 @@ public class UserController {
         return response;
     }
 
-
-    /**
-     * API for deleting a user with the given email
-     * @param email String
-     * @return Request's status
-     */
-    @RequestMapping(path = "/deleteUser", method = RequestMethod.DELETE)
-    public Map<String, Object> deleteUser(@RequestParam String email) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            userService.deleteByUserId(email);
-            response.put("data", "Delete Successful!");
-            response.put("status", 200);
-        }catch (Exception e){
-            response.put("error", "USER_NOT_FOUND");
-            response.put("status", 400);
-        }
-        return response;
-    }
-
     /**
      * Get a user by email
      * @param email String
@@ -71,25 +51,6 @@ public class UserController {
                 response.put("error", "USER_NOT_FOUND");
                 response.put("status", 400);
             }
-        }catch (Exception e){
-            response.put("error", "SERVER_ERROR");
-            response.put("status", 500);
-        }
-        return response;
-    }
-
-    /**
-     * API for updating a user
-     * @param user user
-     * @return Request's status
-     */
-    @RequestMapping(path = "/updateUser", method = RequestMethod.POST)
-    public Map<String, Object> updateUser(@RequestBody User user) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            userService.updateUser(user);
-            response.put("data", "Update Successful!");
-            response.put("status", 200);
         }catch (Exception e){
             response.put("error", "SERVER_ERROR");
             response.put("status", 500);
