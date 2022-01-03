@@ -19,7 +19,7 @@ public class SQSService {
     @Autowired
     ProductService productService;
 
-    void postProductQueue(Product product, String action) {
+    public void postProductQueue(Product product, String action) {
         Map<String, String> map = new HashMap<>();
         map.put("id", product.getId());
         map.put("name", product.getName());
@@ -28,7 +28,7 @@ public class SQSService {
         this.kafkaTemplate.send(TOPIC, (action + "----------" + json.toString()));
     }
 
-    void deleteProductQueue(String id) {
+    public void deleteProductQueue(String id) {
         Map<String, String> map = new HashMap<>();
         map.put("id", id);
         JSONObject json = new JSONObject(map);
@@ -41,7 +41,7 @@ public class SQSService {
             JSONObject obj = new JSONObject(message.split("----------")[1]);
             String action = message.split("----------")[0];
 
-            Product product = new Product(null, (String) obj.get("name"), (String) obj.get("category"), (String) obj.get("subcategory"), Double.parseDouble((String) obj.get("price")), Boolean.getBoolean((String) obj.get("isnew")), (String) obj.get("image_url"), Integer.parseInt((String) obj.get("stock")), (String) obj.get("description"));
+            Product product = new Product((action.equals("add")) ? null : (String) obj.get("id"), (String) obj.get("name"), (String) obj.get("category"), (String) obj.get("subcategory"), Double.parseDouble((String) obj.get("price")), Boolean.getBoolean((String) obj.get("isnew")), (String) obj.get("image_url"), Integer.parseInt((String) obj.get("stock")), (String) obj.get("description"));
             
             if (action.equals("add")) productService.addProduct(product);
             else if (action.equals("update")) productService.updateProduct(product);
