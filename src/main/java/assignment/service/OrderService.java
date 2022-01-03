@@ -25,7 +25,7 @@ public class OrderService {
         return this.orderRepo.findAll(PageRequest.of(current_page,10, Sort.by("id"))).getContent();
     }
 
-    public List<Order> getOrdersByUser(String user){
-        return orderRepo.findAllByUseridContains(user);
+    public List<Order> getOrdersByUser(String user, int page){
+        return orderRepo.findAllByUseridContains(user, PageRequest.of(page, 10));
     }
 }

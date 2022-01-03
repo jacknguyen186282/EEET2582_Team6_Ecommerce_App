@@ -46,10 +46,10 @@ public class OrderController {
     }
 
     @RequestMapping(path = "/getOrderByUser", method = RequestMethod.GET)
-    public Map<String, Object> getOrderByUser(@RequestParam String user_id){
+    public Map<String, Object> getOrderByUser(@RequestParam String user_id, @RequestParam String page){
         Map<String, Object> response = new HashMap<>();
         try{
-            response.put("data", orderService.getOrdersByUser(user_id));
+            response.put("data", orderService.getOrdersByUser(user_id, Integer.parseInt(page)));
             response.put("status", 200);
             return response;
         }
