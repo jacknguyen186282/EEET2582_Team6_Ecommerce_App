@@ -31,10 +31,10 @@ public class OrderController {
     }
 
     @RequestMapping(path = "/addOrder", method = RequestMethod.POST)
-    public Map<String, Object> addOrder(Order order){
+    public Map<String, Object> addOrder(@RequestBody Order order){
         Map<String, Object> response = new HashMap<>();
         try {
-            orderService.addOrder(order);
+            orderService.addOrder(new Order(order.getUserid(), order.getProduct_list(), order.getShipping_address()));
             response.put("data", "Add successful!");
             response.put("status", 200);
             return response;

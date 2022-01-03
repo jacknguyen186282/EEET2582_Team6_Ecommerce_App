@@ -19,12 +19,24 @@ public class Order {
     @Column (length = 1024)
     private String product_list;
 
+    @Column (length = 1024)
+    private String shipping_address;
+
     public Order() {}
 
-    public Order(String userid, String product_list){
+    public Order(String userid, String product_list, String shipping_address){
         this.id = String.valueOf((new Timestamp(System.currentTimeMillis())).getTime()) + "-" + userid;
         this.product_list = product_list;
         this.userid = userid;
+        this.shipping_address = shipping_address;
+    }
+
+    public String getShipping_address() {
+        return shipping_address;
+    }
+
+    public void setShipping_address(String shipping_address) {
+        this.shipping_address = shipping_address;
     }
 
     public void setId(String id) {

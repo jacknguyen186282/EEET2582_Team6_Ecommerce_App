@@ -1,5 +1,6 @@
 package assignment.service;
 
+import assignment.entity.Order;
 import assignment.entity.Product;
 import assignment.entity.User;
 import org.json.JSONObject;
@@ -14,7 +15,10 @@ public class SQSService {
     @Autowired
     private ProductService productService;
     @Autowired
+    private OrderService orderService;
+    @Autowired
     private UserService userService;
+
     @KafkaListener(topics = "product_service", groupId = "group_id")
     public void loadMessageFromProductSQS(String message)  {
         try {
@@ -37,6 +41,17 @@ public class SQSService {
             if (action.equals("add")) userService.addUser(new User((String) obj.get("email"), Boolean.getBoolean((String) obj.get("gender"))));
             else if (action.equals("update")) userService.updateUser(new User((String) obj.get("email"), Boolean.getBoolean((String) obj.get("gender"))));
             else userService.deleteByUserId((String) obj.get("id"));
+        }
+        catch (Exception e){
+            System.out.println("Receive message from SQS Queue: Dummy message");
+        }
+    }
+
+    @KafkaListener(topics = "order_request", groupId = "group_id")
+    public void loadMessageFromOrderSQS(String message)  {
+        try {
+            JSONObject obj = new JSONObject(message);
+            orderService.addOrder(new Order((String) obj.get("user_id"), (String) obj.get("product_list"), (String) obj.get("shipping_address")));
         }
         catch (Exception e){
             System.out.println("Receive message from SQS Queue: Dummy message");
