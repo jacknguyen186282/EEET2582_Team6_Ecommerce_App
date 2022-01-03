@@ -17,28 +17,22 @@ public class UserService {
     UserRepo userRepo;
 
     /**
-     * Add a product to database based on the given object
-     * @param user Product
+     * Add a user to database based on the given object
+     * @param user user
+     * @return Request's status
      */
     public void addUser(User user){
-        this.userRepo.save(user);
-    }
-
-
-    /**
-     * Delete a product by given id
-     * @param id String
-     */
-    public void deleteByUserId(String id){
-        this.userRepo.deleteById(id);
+        if (getUserById(user.getEmail()).isEmpty())
+            this.userRepo.save(user);
     }
 
     /**
-     * Update a specific product based on the new information
-     * @param user Product
+     * Get all information of the user based on the given id
+     * @param email String
+     * @return user
      */
-    public void updateUser(User user){
-        this.userRepo.save(user);
+    public Optional<User> getUserById(String email){
+        return userRepo.findById(email);
     }
 
 }

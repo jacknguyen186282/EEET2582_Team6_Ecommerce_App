@@ -16,6 +16,9 @@ public class Order {
     @Column
     private String userid;
 
+    @Column
+    private String gender;
+
     @Column (length = 1024)
     private String product_list;
 
@@ -24,11 +27,20 @@ public class Order {
 
     public Order() {}
 
-    public Order(String userid, String product_list, String shipping_address){
+    public Order(String userid, String product_list, String shipping_address, String gender){
         this.id = String.valueOf((new Timestamp(System.currentTimeMillis())).getTime()) + "-" + userid;
         this.product_list = product_list;
         this.userid = userid;
         this.shipping_address = shipping_address;
+        this.gender = gender;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getShipping_address() {

@@ -34,7 +34,7 @@ public class OrderController {
     public Map<String, Object> addOrder(@RequestBody Order order){
         Map<String, Object> response = new HashMap<>();
         try {
-            orderService.addOrder(new Order(order.getUserid(), order.getProduct_list(), order.getShipping_address()));
+            orderService.addOrder(new Order(order.getUserid(), order.getProduct_list(), order.getShipping_address(), "Male"));
             response.put("data", "Add successful!");
             response.put("status", 200);
             return response;

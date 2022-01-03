@@ -13,11 +13,11 @@ public class User {
     private String email;
 
     @Column
-    private boolean gender;
+    private String gender;
 
     public User(){}
 
-    public User(String email, boolean gender){
+    public User(String email, String gender){
         this.email = email;
         this.gender = gender;
     }
@@ -26,17 +26,18 @@ public class User {
         return email;
     }
 
-    public boolean isGender() {
-        return gender;
-    }
+
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setGender(boolean gender) {
-        this.gender = gender;
+    public String getGender() {
+        return gender;
     }
 
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 }
 
