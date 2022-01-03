@@ -38,7 +38,7 @@ public class ProductController extends BaseController {
 
         // Replace below http with queue
         try {
-            if (product.containsKey("id") && product.containsKey("name") && product.containsKey("subcategory") && product.containsKey("category")
+            if (product.containsKey("name") && product.containsKey("subcategory") && product.containsKey("category")
                     && product.containsKey("price")  && product.containsKey("rating") && product.containsKey("description")  && product.containsKey("image_url")
                     && product.containsKey("isnew")  && product.containsKey("stock")){
                 sqsService.postProductQueue(product, "add");
