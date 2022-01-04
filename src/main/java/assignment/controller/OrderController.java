@@ -30,21 +30,6 @@ public class OrderController {
         }
     }
 
-    @RequestMapping(path = "/addOrder", method = RequestMethod.POST)
-    public Map<String, Object> addOrder(@RequestBody Order order){
-        Map<String, Object> response = new HashMap<>();
-        try {
-            orderService.addOrder(new Order(order.getUserid(), order.getProduct_list(), order.getShipping_address(), "Male"));
-            response.put("data", "Add successful!");
-            response.put("status", 200);
-            return response;
-        }catch (Exception e){
-            response.put("error", "SERVER_ERROR");
-            response.put("status", 500);
-            return response;
-        }
-    }
-
     @RequestMapping(path = "/getOrderByUser", method = RequestMethod.GET)
     public Map<String, Object> getOrderByUser(@RequestParam String user_id, @RequestParam String page){
         Map<String, Object> response = new HashMap<>();

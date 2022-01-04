@@ -53,14 +53,19 @@ public class SQSService {
             JSONObject obj = new JSONObject(message);
             Optional<User> user = userService.getUserById((String) obj.get("user_id"));
             ArrayList<Product> products = new ArrayList<>();
-
+            double total = 0;
             for (String id : ((String) obj.get("product_list")).split(",")) {
                 Optional<Product> product = productService.getProductById(id);
-                product.ifPresent(products::add);
+                if(product.isPresent()){
+                    total += product.get().getPrice();
+                    products.add(product.get());
+                }
             }
 
             JSONArray ja = new JSONArray(products);
-            user.ifPresent(value -> orderService.addOrder(new Order((String) obj.get("user_id"), ja.toString(), (String) obj.get("shipping_address"), value.getGender())));
+            if (user.isPresent()){
+                orderService.addOrder(new Order((String) obj.get("user_id"), ja.toString(), (String) obj.get("shipping_address"), user.get().getGender(), total));
+            }
         }
         catch (Exception e){
             System.out.println("Receive message from SQS Queue: Dummy message");

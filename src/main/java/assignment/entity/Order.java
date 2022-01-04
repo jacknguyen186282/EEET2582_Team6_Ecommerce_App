@@ -25,14 +25,26 @@ public class Order {
     @Column (length = 1024)
     private String shipping_address;
 
+    @Column
+    private double total;
+
     public Order() {}
 
-    public Order(String userid, String product_list, String shipping_address, String gender){
+    public Order(String userid, String product_list, String shipping_address, String gender, double total){
         this.id = String.valueOf((new Timestamp(System.currentTimeMillis())).getTime()) + "-" + userid;
         this.product_list = product_list;
         this.userid = userid;
         this.shipping_address = shipping_address;
         this.gender = gender;
+        this.total = total;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
     }
 
     public String getGender() {
