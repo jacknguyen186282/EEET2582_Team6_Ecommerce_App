@@ -61,7 +61,7 @@ public class OrderController extends BaseController {
         try {
             if (order.containsKey("user_id") && order.containsKey("product_list") && order.containsKey("shipping_address")){
                 sqsService.postOrderQueue(order);
-                return ResponseEntity.status(200).body(new Response(200, "Success!"));
+                return ResponseEntity.status(203).body(new Response(203, null));
             }
             else return ResponseEntity.status(400).body(new Response(400, "Missing params!"));
         } catch (Exception e) {

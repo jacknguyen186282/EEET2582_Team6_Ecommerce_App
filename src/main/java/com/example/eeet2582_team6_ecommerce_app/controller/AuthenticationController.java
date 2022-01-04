@@ -18,7 +18,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class AuthenticationController {
     private AuthorizationService authorizationService;
-    private JwtDecoder jwtDecoder;
+//    private JwtDecoder jwtDecoder;
 
 //    @GetMapping("/api/authorize")
 //    public ResponseEntity<Response> authorize(@RequestHeader(value = "Authorization") String authorizationHeader) {
@@ -63,16 +63,16 @@ public class AuthenticationController {
 //        return ResponseEntity.ok().body(response);
 //    }
 //
-    @GetMapping("/api/user")
-    public Map<String, Object> isAdmin(@RequestParam String email) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("isAdmin", authorizationService.isAdmin(email));
-        return response;
-    }
-
-    @GetMapping("/api/authorize")
-    public Response authorizeUser(@RequestHeader(value = "Authorization") String authorizationHeader) {
-        AuthorizationResponse authorizationResponse = authorizationService.authorizeAdminUser(authorizationHeader);
-        return new Response(200, authorizationResponse.getStatus());
-    }
+//    @GetMapping("/api/user")
+//    public Map<String, Object> isAdmin(@RequestParam String email) {
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("isAdmin", authorizationService.isAdmin(email));
+//        return response;
+//    }
+//
+//    @GetMapping("/api/authorize")
+//    public Response authorizeUser(@RequestHeader(value = "Authorization") String authorizationHeader) {
+//        AuthorizationResponse authorizationResponse = authorizationService.authorizeAdminUser(authorizationHeader);
+//        return new Response(200, authorizationResponse.getStatus());
+//    }
 }

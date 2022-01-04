@@ -32,7 +32,7 @@ public class UserController extends BaseController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<Response> addProduct(HttpServletRequest httpServletRequest,
+    public ResponseEntity<Response> addUser(HttpServletRequest httpServletRequest,
                                                @RequestBody Map<String, Object> user,
                                                @RequestHeader(value = "Authorization") String authorizationHeader) {
         AuthorizationResponse authorizationResponse = authorizationService.authorizeAdminUser(authorizationHeader);
@@ -44,7 +44,7 @@ public class UserController extends BaseController {
         try {
             if (user.containsKey("email")){
                 sqsService.postUserQueue(user);
-                return ResponseEntity.status(200).body(new Response(200, "Success!"));
+                return ResponseEntity.status(203).body(new Response(203, null));
             }
             else return ResponseEntity.status(400).body(new Response(400, "Missing params!"));
         } catch (Exception e) {

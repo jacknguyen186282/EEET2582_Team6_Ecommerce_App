@@ -42,7 +42,7 @@ public class ProductController extends BaseController {
                     && product.containsKey("price")  && product.containsKey("rating") && product.containsKey("description")  && product.containsKey("image_url")
                     && product.containsKey("isnew")  && product.containsKey("stock")){
                 sqsService.postProductQueue(product, "add");
-                return ResponseEntity.status(200).body(new Response(200, "Success!"));
+                return ResponseEntity.status(203).body(new Response(203, null));
             }
             else return ResponseEntity.status(400).body(new Response(400, "Missing params!"));
         } catch (Exception e) {
@@ -64,7 +64,7 @@ public class ProductController extends BaseController {
             Map<String, Object> map = getQuery(httpServletRequest);
             if (map.containsKey("id")){
                 sqsService.postProductQueue(map, "delete");
-                return ResponseEntity.status(200).body(new Response(200, "Success!"));
+                return ResponseEntity.status(203).body(new Response(203, null));
             }
             else return ResponseEntity.status(400).body(new Response(400, "Missing params!"));
         } catch (Exception e) {
@@ -88,7 +88,7 @@ public class ProductController extends BaseController {
                     && product.containsKey("price")  && product.containsKey("rating") && product.containsKey("description")  && product.containsKey("image_url")
                     && product.containsKey("isnew")  && product.containsKey("stock")){
                 sqsService.postProductQueue(product, "update");
-                return ResponseEntity.status(200).body(new Response(200, "Success!"));
+                return ResponseEntity.status(203).body(new Response(203, null));
             }
             else return ResponseEntity.status(400).body(new Response(400, "Missing params!"));
         } catch (Exception e) {
