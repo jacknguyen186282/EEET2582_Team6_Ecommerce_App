@@ -5,6 +5,7 @@ import com.example.eeet2582_team6_ecommerce_app.dto.Response;
 import com.example.eeet2582_team6_ecommerce_app.entity.UserStatus;
 import com.example.eeet2582_team6_ecommerce_app.repository.UserStatusRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -22,6 +23,7 @@ public class AuthorizationService {
     private JwtDecoder jwtDecoder;
     private UserStatusRepository userStatusRepository;
     protected WebClient webClient;
+    SQSService sqsService;
 
     private final String ISSUER = "https://cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_b97nG1Rp5";
     private final String CLIENT_ID = "4mpuhie909kgds8i0pcie8kaif";
@@ -239,14 +241,26 @@ public class AuthorizationService {
         }
 
         // Add user to User database
-        try {
-            Response microserviceResponse = webClient.post().uri(userMicroservice + "/user/login")
-                    .body(Mono.just(userInfo), Object.class)
-                    .exchangeToMono(clientResponse -> {
-                        return clientResponse.bodyToMono(Response.class);
-                    }).block();
+//        try {
+//            Response microserviceResponse = webClient.post().uri(userMicroservice + "/user/login")
+//                    .body(Mono.just(userInfo), Object.class)
+//                    .exchangeToMono(clientResponse -> {
+//                        return clientResponse.bodyToMono(Response.class);
+//                    }).block();
+//
+//            return new Response(microserviceResponse.getStatus(), microserviceResponse.getError(), microserviceResponse.getData());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new Response(500, "Internal server error");
+//        }
 
-            return new Response(microserviceResponse.getStatus(), microserviceResponse.getError(), microserviceResponse.getData());
+        // Add User to database
+        try {
+            if (userInfo.containsKey("email")){
+                sqsService.postUserQueue(userInfo);
+                return new Response(203, null);
+            }
+            else return new Response(400, "Missing params!");
         } catch (Exception e) {
             e.printStackTrace();
             return new Response(500, "Internal server error");
