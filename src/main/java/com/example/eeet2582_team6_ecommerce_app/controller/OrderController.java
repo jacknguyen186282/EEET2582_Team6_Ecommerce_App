@@ -52,7 +52,7 @@ public class OrderController extends BaseController {
     public ResponseEntity<Response> addOrder(HttpServletRequest httpServletRequest,
                                               @RequestBody Map<String, Object> order,
                                               @RequestHeader(value = "Authorization") String authorizationHeader) {
-        AuthorizationResponse authorizationResponse = authorizationService.authorizeUser(authorizationHeader, (String) order.get("userid"));
+        AuthorizationResponse authorizationResponse = authorizationService.authorizeUser(authorizationHeader, (String) order.get("user_id"));
         if (authorizationResponse.getStatus().equals("error")) {
             return ResponseEntity.status(403).body(new Response(403, authorizationResponse.getError()));
         }
