@@ -222,41 +222,28 @@ public class AuthorizationService {
             return response;
         }
 
-        // Update user status cache when user sign in
-        try {
-            // Get user status from database then add to cache
-            Response microserviceResponse = webClient.get().uri(userMicroservice + "/user/getUserById?email=" + ((String) userInfo.get("email")))
-                    .exchangeToMono(clientResponse -> {
-                        return clientResponse.bodyToMono(Response.class);
-                    }).block();
-
-            if (microserviceResponse != null && microserviceResponse.getStatus() == 200 && microserviceResponse.getData() != null) {
-                Map<String, Object> user = (Map<String, Object>) microserviceResponse.getData();
-                userStatusRepository.save(new UserStatus((String) userInfo.get("email"), (Boolean) user.get("admin")));
-            } 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Add user to User database
-//        try {
-//            Response microserviceResponse = webClient.post().uri(userMicroservice + "/user/login")
-//                    .body(Mono.just(userInfo), Object.class)
-//                    .exchangeToMono(clientResponse -> {
-//                        return clientResponse.bodyToMono(Response.class);
-//                    }).block();
-//
-//            return new Response(microserviceResponse.getStatus(), microserviceResponse.getError(), microserviceResponse.getData());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new Response(500, "Internal server error");
-//        }
 
         // Add User to database
         try {
             if (userInfo.containsKey("email")){
                 sqsService.postUserQueue(userInfo);
-                return new Response(203, null);
+
+                Boolean isAdmin = false;
+                // Get user status from database then add to cache
+                Response microserviceResponse = webClient.get().uri(userMicroservice + "/user/getUserById?email=" + ((String) userInfo.get("email")))
+                        .exchangeToMono(clientResponse -> {
+                            return clientResponse.bodyToMono(Response.class);
+                        }).block();
+
+                if (microserviceResponse != null && microserviceResponse.getStatus() == 200 && microserviceResponse.getData() != null) {
+                    Map<String, Object> user = (Map<String, Object>) microserviceResponse.getData();
+                    userStatusRepository.save(new UserStatus((String) userInfo.get("email"), (Boolean) user.get("admin")));
+                    isAdmin = (Boolean) user.get("admin");
+                }
+
+                Response res = new Response(203, null);
+                res.setData(isAdmin);
+                return res;
             }
             else return new Response(400, "Missing params!");
         } catch (Exception e) {
