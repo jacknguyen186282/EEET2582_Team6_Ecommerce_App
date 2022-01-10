@@ -45,6 +45,10 @@ window.onload = async () => {
         localStorage.removeItem("id_token");
         redirect(originalUrl);
     }
+    
+    const body = await addUserResponse.json();
+    console.log(body);
+    if (body && body.data) localStorage.setItem("isAdmin", body.data);
 
     window.location.replace(originalUrl);
 }
