@@ -233,9 +233,7 @@ public class AuthorizationService {
             if (microserviceResponse != null && microserviceResponse.getStatus() == 200 && microserviceResponse.getData() != null) {
                 Map<String, Object> user = (Map<String, Object>) microserviceResponse.getData();
                 userStatusRepository.save(new UserStatus((String) userInfo.get("email"), (Boolean) user.get("admin")));
-            } else {
-                userStatusRepository.save(new UserStatus((String) userInfo.get("email"), false));
-            }
+            } 
         } catch (Exception e) {
             e.printStackTrace();
         }
