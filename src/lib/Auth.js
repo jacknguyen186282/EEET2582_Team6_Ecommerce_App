@@ -33,6 +33,21 @@ export async function refreshToken() {
     console.log(body);
     localStorage.setItem("access_token", body.access_token);
     localStorage.setItem("id_token", body.id_token);
+
+    // Add user to database if not exist
+    const addUserResponse = await fetch(`${gatewayUrl}/api/signup`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${body.access_token} ${body.id_token}`
+        },
+        body: JSON.stringify(localStorage.getItem("userInfo"))
+    })
+    
+    if (addUserResponse.ok){
+        const data = await addUserResponse.json();
+        if (data && data.data) localStorage.setItem("isAdmin", data.data);
+    }
 }
 
 export async function getUserInfo() {
