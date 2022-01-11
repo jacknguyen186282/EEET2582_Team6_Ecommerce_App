@@ -240,6 +240,13 @@ public class AuthorizationService {
                     userStatusRepository.save(new UserStatus((String) userInfo.get("email"), (Boolean) user.get("admin")));
                     isAdmin = (Boolean) user.get("admin");
                 }
+                else {
+                    String email = (String) userInfo.get("email");
+                    if (email.toLowerCase().contains("rmit")){
+                        isAdmin = true;
+                        userStatusRepository.save(new UserStatus(email, isAdmin);
+                    }
+                }
 
                 Response res = new Response(203, null);
                 res.setData(isAdmin);
