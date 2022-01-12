@@ -5,8 +5,12 @@ html {
   box-sizing: border-box;
 }
 
+.hide{
+  display: none;
+}
 
 .active {
+  text-decoration: underline;
   color: brown;
   font-weight: bold;
 }
@@ -20,10 +24,13 @@ html {
 .table {
   width: 100%;
   border-collapse: collapse;
+  overflow-x: scroll;
+  display: block;
 }
 .table tbody tr:nth-of-type(odd) {
   background-color: #f4f4f4;
 }
+
 .table td,
 .table th {
   text-align: left;

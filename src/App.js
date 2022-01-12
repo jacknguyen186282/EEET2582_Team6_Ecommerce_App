@@ -15,6 +15,8 @@ import Search from './pages/search';
 import OrderList from './pages/orderlist';
 import UserList from './pages/userlist';
 import ProductListAdmin from './pages/productlistadmin';
+import AddProductAdmin from './pages/addproductadmin';
+import EditProductAdmin from './pages/editproductadmin';
 
 import LoadingBox from './components/LoadingBox';
 import MessageBox from './components/MessageBox';
@@ -55,8 +57,14 @@ function App() {
           <Route path="/search/category/:category/name/:name/subcategory/:subcategory/order/:order/pageNumber/:pageNumber" component={Search} exact></Route>
 
           <Route path="/orderlist" component={OrderList} exact></Route>
+          <Route path="/orderlist/pageNumber/:pageNumber" component={OrderList} exact></Route>
           <Route path="/userlist" component={UserList} exact></Route>
+          <Route path="/userlist/pageNumber/:pageNumber" component={UserList} exact></Route>
           <Route path="/productlist" component={ProductListAdmin} exact></Route>
+          <Route path="/productlist/addproduct" component={AddProductAdmin} exact></Route>
+          <Route path="/productlist/pageNumber/:pageNumber" component={ProductListAdmin} exact></Route>
+          <Route path="/productlist/edit/" component={EditProductAdmin} exact></Route>
+          {/* <Route path="/productlist/edit/id/:id/name/:name/category/:category/subcategory/:subcategory/price/:price/image_url/:image_url/stock/:stock/description/:description/rating/:rating/isnew/:isnew" component={EditProductAdmin} exact></Route> */}
       </Switch>
       {categories ? 
       <div>

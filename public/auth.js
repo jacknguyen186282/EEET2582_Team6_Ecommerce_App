@@ -26,9 +26,7 @@ window.onload = async () => {
         localStorage.removeItem("id_token");
         redirect(originalUrl);
     }
-    window.localStorage.setItem("cognito_userInfo", userInfo);
-    window.localStorage.setItem("userInfo", JSON.stringify(userInfo));
-
+    
     // Add user to database if not exist
     const addUserResponse = await fetch(`${gatewayUrl}/api/signup`, {
         method: "POST",
@@ -45,6 +43,13 @@ window.onload = async () => {
         localStorage.removeItem("id_token");
         redirect(originalUrl);
     }
+    
+    const body = await addUserResponse.json();
+    console.log(body);
+    if (body && body.data) userInfo.isAdmin = body.data.toString();
+    
+    window.localStorage.setItem("cognito_userInfo", userInfo);
+    window.localStorage.setItem("userInfo", JSON.stringify(userInfo));
 
     window.location.replace(originalUrl);
 }

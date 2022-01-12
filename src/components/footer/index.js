@@ -10,7 +10,7 @@ export default function Footer({children, ...restProps}) {
     return ( 
         <Container {...restProps}>
             {children}
-            <p id="copyright">Copyright © 2021 rfashion.com</p>  
+            <p id="copyright">Copyright © 2022 team6architecture.com</p>  
         </Container>
     );
 } 

@@ -27,7 +27,7 @@ export const FooterContainer = ({categories}) => {
                 <Footer.Column>
                     <Footer.Heading>Catgory</Footer.Heading>
                     {categoryList.map((cateogry, index) => {
-                        return <Footer.Link to="/category" key={index}>{cateogry}</Footer.Link> 
+                        return <Footer.Link to="/category" key={index}>{cateogry.substring(2)}</Footer.Link> 
                     })}
                 </Footer.Column>
                 <Footer.Column>

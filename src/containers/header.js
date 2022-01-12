@@ -34,7 +34,7 @@ export const HeaderContainer = ({ categories }) => {
       <Header.TopContainer>
         <Header.Wrapper>
           <Header.Contact>
-            <Header.TextLink href="#">Contact Us <i className="far fa-paper-plane"></i></Header.TextLink>
+            <Header.TextLink onClick={() => window.alert('Please Contact Doctor Thanh for Team 6 - Architecture & Design')}>Contact Us <i className="far fa-paper-plane"></i></Header.TextLink>
           </Header.Contact>
           <Header.Logo to="/">EEET2582 Ecommerce Shop</Header.Logo>
           <Header.Nav>

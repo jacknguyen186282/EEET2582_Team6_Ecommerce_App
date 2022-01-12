@@ -27,13 +27,6 @@ export const PlaceOrderContainer = (props) => {
    
 
   let product_list = '';
-//   const [completedOrder, setCompletedOrder] =useState({
-//       "userid": "Phu Nguyen",
-//       "product_list": '',
-//       "shippingAddress": fullShippingAddress,
-//   });
-
-  
   
   const dispatch = useDispatch();
   const placeOrderHandler = () => {

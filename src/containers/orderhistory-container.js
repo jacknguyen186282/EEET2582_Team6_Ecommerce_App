@@ -28,10 +28,14 @@ export const OrderHistoryContainer = (props) => {
               <th>NAME X QUANTITY</th>
               <th>Shipping Address</th>
               <th>TOTAL</th>
+              <th>CREATED DATE</th>
             </tr>
           </thead>
           <tbody>
-            {orders.data ? orders.data.map((order) => (
+            {orders.data ? orders.data.content.map((order) => { 
+              let timestamp = parseInt(order.id.substring(0, 13))
+
+              return (
                 <tr key={order.id}>
                 <td>{order.id.substring(0, 13)}</td>
                 <td>{JSON.parse(order.product_list).map((product) => (
@@ -41,9 +45,10 @@ export const OrderHistoryContainer = (props) => {
                 ))}</td>
                 <td>{order.shipping_address}</td>
                 <td>{order.total.toFixed(2)}</td>
+                <td>{new Date(timestamp).toISOString().slice(0, 19).replace('T', ' ')}</td>
         
               </tr>
-            )) : <p>No Order is found!</p> }
+            )}) : <p>No Order is found!</p> }
           </tbody>
         </table>
         </>

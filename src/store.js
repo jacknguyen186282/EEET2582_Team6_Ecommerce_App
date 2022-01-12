@@ -2,15 +2,16 @@ import { createStore, compose, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 
 import { cartReducer } from './reducers/cartReducers/cartReducers';
-
 import { orderCreateReducer, orderUserHistoryListReducer } from './reducers/orderReducers/orderReducers';
-import { orderAdminHistoryListReducer, userListReducer, productListAdminReducer } from './reducers/adminReducers/adminReducers';
-
 import { productListReducer } from './reducers/productReducers/productListReducers';
 import { productCategoryListReducer } from './reducers/productReducers/productCategoryListReducers';
 import { productDetailReducer } from './reducers/productReducers/productDetailReducers';
-
 import { userSignoutReducer } from './reducers/userReducers/signoutReducers';
+
+import { orderAdminHistoryListReducer, userListReducer, 
+        productListAdminReducer, productCreateAdminReducer,
+        productDeleteAdminReducer, productEditAdminReducer} from './reducers/adminReducers/adminReducers';
+
 
 const initialState = {
   
@@ -45,6 +46,9 @@ const reducer = combineReducers({
     orderAdminHistoryList: orderAdminHistoryListReducer,
     userList: userListReducer,
     productListAdmin: productListAdminReducer,
+    productCreateAdmin: productCreateAdminReducer,
+    productDeleteAdmin: productDeleteAdminReducer,
+    productEditAdmin: productEditAdminReducer,
     
 });
 

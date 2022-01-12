@@ -27,7 +27,7 @@ export const SearchContainer = (props) => {
       const dispatch = useDispatch();
       const productList = useSelector((state) => state.productList);
       const { loading, error, products } = productList;
-      console.log(products)
+      // console.log(products)
     
       const productCategoryList = useSelector((state) => state.productCategoryList);
       const {
@@ -39,12 +39,12 @@ export const SearchContainer = (props) => {
       //   dispatch(listProductCategories());
       // }, [dispatch]);
       useEffect(() => {
-        console.log("Search Container")
-        console.log(pageNumber)
-        console.log(name)
-        console.log(category)
-        console.log(subcategory)
-        console.log(order)
+        // console.log("Search Container")
+        // console.log(pageNumber)
+        // console.log(name)
+        // console.log(category)
+        // console.log(subcategory)
+        // console.log(order)
         dispatch(
           listProducts({
             pageNumber: pageNumber - 1,
@@ -53,13 +53,6 @@ export const SearchContainer = (props) => {
             subcategory: subcategory !== 'all' ? subcategory : '',
             order: order !== 'newest' ? order : '',
           })
-          // listProducts({
-          //   pageNumber,
-          //   name: name !== 'all' ? name : '',
-          //   category: category !== 'all' ? category : '',
-          //   subcategory: subcategory !== 'all' ? subcategory : '',
-          //   order,
-          // })
         );
       }, [category, dispatch, subcategory, name, order, pageNumber]);
 
@@ -75,7 +68,6 @@ export const SearchContainer = (props) => {
   return (
     <div>
     <Category>
-      {/* LocationLink (Homepage > Category > Jewelry) */}
       <Category.LocationLink>
         <p>Homepage</p>
         <span> &gt; </span>
@@ -92,13 +84,18 @@ export const SearchContainer = (props) => {
           <Category.Block>
             {/* Header */}
             <Category.SideBarHeader>
+            <Link to={'/search/category/all'}><h2><i class="fas fa-check-circle all-icon"></i>&nbsp;&nbsp;View All</h2></Link>
+            </Category.SideBarHeader>
+            {/* <Category.Option><Link to={'/search/category/all'}>All</Link></Category.Option> */}
+
+            <Category.SideBarHeader>
               <h2>Categories</h2>
             </Category.SideBarHeader>
 
             
             {/* Category Options */}
             {categories ? Object.keys(categories.data).map((c, index) => (
-              <Category.Option key={index}>
+              <Category.Option key={index} className={category === c.substring(2) ? 'active' : ''}>
                 <Link to={`/search/category/${c.substring(2)}`}>
               <i class="fas fa-check-circle all-icon"></i>
               <label class="all-label">
@@ -118,7 +115,7 @@ export const SearchContainer = (props) => {
             </Category.SideBarHeader>
             {/* Subcategory Options */}
             {(categories && category !== "all") ? categories.data[`a-${category}`].map((sc) => (
-              <Category.Option>
+              <Category.Option className={subcategory === sc ? 'active' : ''}>
               <Link to={`/search/category/${category}/subcategory/${sc}`}>
               <i class="fas fa-check-circle all-icon"></i>
               <label class="all-label">
